@@ -16,7 +16,6 @@ jobs:
           source: "./*"
           target: angular
           overwrite: true
-
       - name: SSH and Deploy Angular Container
         uses: appleboy/ssh-action@v1.0.0
         with:
