@@ -1,0 +1,32 @@
+name: Deploy Angular to EC2
+on:
+  push:
+    branches: [ main ]
+jobs:
+  deploy-angular:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Upload Angular build + Dockerfile
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "./*"
+          target: angular
+          overwrite: true
+
+      - name: SSH and Deploy Angular Container
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd angular
+            docker stop angular-ui || true
+            docker rm angular-ui || true
+            docker rmi angular-ui || true
+            docker build -t angular-ui .
+            docker run -d --name angular-ui -p 8083:80 angular-ui
