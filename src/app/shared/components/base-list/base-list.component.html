@@ -1,0 +1,115 @@
+<p-table
+  #pTable
+  [value]="data"
+  [dataKey]="dataKey"
+  [paginator]="paginator"
+  [rows]="rows"
+  [rowsPerPageOptions]="rowsPerPageOptions"
+  [lazy]="lazy"
+  (onLazyLoad)="handleLazyLoad($event)"
+  [totalRecords]="totalRecords"
+  styleClass="p-datatable-striped p-datatable-gridlines p-datatable-sm"
+  responsiveLayout="scroll"
+  [showCurrentPageReport]="showCurrentPageReport"
+  [currentPageReportTemplate]="currentPageReportTemplate"
+>
+  <ng-template pTemplate="caption">
+    <ng-container *ngIf="customHeaderTemplateRef">
+      <ng-container
+        *ngTemplateOutlet="customHeaderTemplateRef; context: { $implicit: data, table: pTable, refreshFn: refresh.bind(this) }"></ng-container>
+    </ng-container>
+  </ng-template>
+
+  <ng-template pTemplate="header">
+    <tr>
+      <!--      <th *ngIf="customRowExpansionTemplateRef" style="width: 3rem" [frozen]="true"></th>-->
+      <th
+        *ngFor="let col of _visibleColumns"
+        [ngStyle]="{ 'width': col.width }"
+        [ngClass]="getHeaderClasses(col)"
+        [pTooltip]="col.header" tooltipPosition="top"
+      >
+        {{ col.header }}
+        <!--        <p-sortIcon *ngIf="lazy || col.sortable" [field]="col.field"></p-sortIcon>-->
+      </th>
+      <!--      <th-->
+      <!--        *ngIf="shouldShowActionsColumn()"-->
+      <!--        [ngStyle]="{ 'width': actionsColumnWidth }"-->
+      <!--        class="text-center"-->
+      <!--      >-->
+      <!--        {{ actionsColumnHeader }}-->
+      <!--      </th>-->
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-expanded="expanded">
+    <tr [pSelectableRow]="rowData">
+      <!--      <td *ngIf="customRowExpansionTemplateRef" pFrozenColumn>-->
+      <!--        <button type="button" pButton pRipple [pRowToggler]="rowData"-->
+      <!--                class="p-button-text p-button-rounded p-button-plain"-->
+      <!--                [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>-->
+      <!--      </td>-->
+      <td
+        *ngFor="let col of _visibleColumns"
+        [ngClass]="getBodyCellClasses(col)"
+        [ngStyle]="{ 'text-align': col.dataType === 'number' || col.dataType === 'currency' ? 'right' : (col.dataType === 'boolean' ? 'center' : 'left') }"
+      >
+        <ng-container *ngIf="col.customCellTemplate; else defaultCellContent">
+          <ng-container
+            *ngTemplateOutlet="col.customCellTemplate; context: { $implicit: getNestedValue(rowData, col.field), rowData: rowData, column: col }"></ng-container>
+        </ng-container>
+        <ng-template #defaultCellContent>
+          {{ formatCellData(getNestedValue(rowData, col.field), col, rowData) }}
+        </ng-template>
+      </td>
+      <!--      <td-->
+      <!--        *ngIf="shouldShowActionsColumn()"-->
+      <!--        class="text-center action-buttons-cell"-->
+      <!--        [pFrozenColumn]="actionsColumnFrozen" [alignFrozen]="actionsColumnFrozenAlign"-->
+      <!--        [frozenDirection]="actionsColumnFrozenAlign"-->
+      <!--      >-->
+      <!--        <ng-container *ngIf="customActionsTemplateRef; else defaultActionsContent">-->
+      <!--          <ng-container-->
+      <!--            *ngTemplateOutlet="customActionsTemplateRef; context: { $implicit: rowData, rowData: rowData }"></ng-container>-->
+      <!--        </ng-container>-->
+      <!--        <ng-template #defaultActionsContent>-->
+      <!--          <ng-container *ngFor="let action of _effectiveRowActions">-->
+      <!--            <button-->
+      <!--              *ngIf="!action.visible || action.visible(rowData)"-->
+      <!--              pButton-->
+      <!--              pRipple-->
+      <!--              [icon]="action.icon"-->
+      <!--              [pTooltip]="action.tooltip"-->
+      <!--              tooltipPosition="top"-->
+      <!--              [label]="action.label"-->
+      <!--              [class]="action.styleClass || 'p-button-text p-button-sm'"-->
+      <!--              (click)="executeAction(action, rowData)"-->
+      <!--              [disabled]="isActionDisabled(action, rowData)"-->
+      <!--            ></button>-->
+      <!--          </ng-container>-->
+      <!--        </ng-template>-->
+      <!--      </td>-->
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage" let-columns>
+    <ng-container *ngIf="customEmptyMessageTemplateRef; else defaultEmptyMsg">
+      <ng-container *ngTemplateOutlet="customEmptyMessageTemplateRef; context: { columns: columns }"></ng-container>
+    </ng-container>
+    <ng-template #defaultEmptyMsg>
+      <tr>
+        <td
+          [attr.colspan]="_visibleColumns.length + (shouldShowActionsColumn() ? 1 : 0) + (customRowExpansionTemplateRef ? 1 : 0)">
+          Không tìm thấy dữ liệu.
+        </td>
+      </tr>
+    </ng-template>
+  </ng-template>
+
+  <ng-template pTemplate="rowexpansion" let-rowData>
+    <ng-container *ngIf="customRowExpansionTemplateRef">
+      <ng-container
+        *ngTemplateOutlet="customRowExpansionTemplateRef; context: { $implicit: rowData, rowData: rowData }"></ng-container>
+    </ng-container>
+  </ng-template>
+</p-table>

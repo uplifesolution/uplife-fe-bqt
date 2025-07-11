@@ -1,0 +1,31 @@
+<div class="my-6 font-semibold text-primary">{{ 'apartment.subTitle.info' | translate }}</div>
+<div [formGroup]="form" class="flex flex-col gap-6">
+  <m-text class="block" label="{{ 'apartment.label.code' | translate }}" formControlName="apartmentCode"></m-text>
+  <m-text class="block" label="{{ 'apartment.label.name' | translate }}" formControlName="apartmentNumber"></m-text>
+  <m-text class="block" label="{{ 'apartment.label.building' | translate }}"
+          formControlName="buildingBlock"></m-text>
+  <m-text class="block" label="{{ 'apartment.label.floor' | translate }}"
+          formControlName="floor"></m-text>
+  <m-text class="block" label="{{ 'apartment.label.area' | translate }}"
+          formControlName="area"></m-text>
+  <m-select class="block" label="{{'apartment.label.status' | translate }}" formControlName="status"
+            [options]="statusOptions.data" [loading]="statusOptions.loading"></m-select>
+
+</div>
+@if (type === 'update') {
+  <div class="my-6 font-semibold text-primary">
+    <p-checkbox [binary]="true" [(ngModel)]="addHomeOwner" [ngModelOptions]="{standalone: true}"/>
+    {{ 'apartment.subTitle.homeOwnerInfo' | translate }}
+  </div>
+  <div *ngIf="addHomeOwner" [formGroup]="formHomeOwner" class="flex flex-col gap-6">
+    <m-text class="block" label="{{ 'resident.label.fullName' | translate }}" formControlName="fullName"></m-text>
+    <m-select class="block" label="{{ 'resident.label.gender' | translate }}" formControlName="gender"
+              [options]="genderOptions.data" [loading]="genderOptions.loading"></m-select>
+    <m-datepicker class="block" label="{{ 'resident.label.birthDate' | translate }}"
+                  formControlName="birthDate"></m-datepicker>
+    <m-text class="block" label="{{ 'resident.label.phoneNumber' | translate }}"
+            formControlName="phoneNumber"></m-text>
+
+  </div>
+}
+

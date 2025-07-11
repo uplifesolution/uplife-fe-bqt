@@ -1,0 +1,13 @@
+:host ::ng-deep {
+  .p-iconfield {
+    input {
+      width: 100%;
+    }
+  }
+}
+
+.voting-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

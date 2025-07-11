@@ -1,0 +1,59 @@
+
+.validator-errors {
+  .error-msg {
+    color: var(--p-red-500);
+  }
+}
+
+.page-title {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+
+  &-left {
+    .title {
+      font-weight: 600;
+      font-size: 1.25rem;
+    }
+  }
+
+  &-right {
+    display: flex;
+    gap: .5rem;
+  }
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  &-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--p-primary-800);
+    }
+  }
+}
+
+.text-label {
+  font-size: 1rem;
+  margin-bottom: .5rem;
+}
+
+.text-value {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.text-link {
+  color: var(--p-primary-400);
+  cursor: pointer;
+}
+
+

@@ -1,0 +1,33 @@
+<div class="my-6 font-semibold text-primary">{{ 'building.subTitle.buildingInfo' | translate }}</div>
+<div [formGroup]="form" class="flex flex-col gap-6">
+  <m-text class="block" label="{{ 'building.label.code' | translate }}" formControlName="code"></m-text>
+  <m-text class="block" label="{{ 'building.label.name' | translate }}" formControlName="name"></m-text>
+  <m-text class="block" label="{{ 'building.label.numFloors' | translate }}" formControlName="numFloors"></m-text>
+  <m-text class="block" label="{{ 'building.label.numApartments' | translate }}"
+          formControlName="numApartments"></m-text>
+  <m-select class="block" label="{{'building.label.status' | translate }}" formControlName="statusCode"
+            [options]="statusOptions.data" [loading]="statusOptions.loading"></m-select>
+  <m-datepicker class="block" label="{{ 'building.label.startDate' | translate }}"
+                formControlName="activeDate"></m-datepicker>
+  <m-text class="block" label="{{ 'building.label.parkingSlotCar' | translate }}"
+          formControlName="parkingSlotCar"></m-text>
+  <m-text class="block" label="{{ 'building.label.parkingSlotMotorBike' | translate }}"
+          formControlName="parkingSlotMotorBike"></m-text>
+  <m-text class="block" label="{{ 'building.label.parkingSlotBike' | translate }}"
+          formControlName="parkingSlotBike"></m-text>
+  <div class="flex items-center gap-2">
+    <p-checkbox formControlName="hasResidentCard" [binary]="true" inputId="hasResidentCard"/>
+    <label class="font-semibold" for="hasResidentCard">{{ 'building.label.hasResidentCard' | translate }}</label>
+    <p-checkbox formControlName="isAuto" [binary]="true" inputId="isAuto"/>
+    <label class="font-semibold" for="isAuto">{{ 'building.label.isAuto' | translate }}</label>
+  </div>
+</div>
+<div class="my-6 font-semibold text-primary">{{ 'building.subTitle.addressInfo' | translate }}</div>
+<div [formGroup]="form">
+  <m-select class="mb-6 block" label="{{ 'investors.label.province' | translate}}" formControlName="provinceCode"
+            [options]="listProvince.data" [loading]="listProvince.loading"></m-select>
+  <m-select class="mb-6 block" label="{{ 'investors.label.ward' | translate}}" formControlName="wardCode"
+            [options]="listWard.data" [loading]="listWard.loading"></m-select>
+  <m-text class="mb-6 block" label="{{ 'building.label.address' | translate}}"
+          formControlName="address"></m-text>
+</div>

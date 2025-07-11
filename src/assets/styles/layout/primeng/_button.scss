@@ -1,0 +1,17 @@
+.p-dialog {
+  .custom-dialog-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 0;
+
+    .close-dialog {
+      cursor: pointer;
+    }
+  }
+
+  .custom-dialog-footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 0;
+  }
+}

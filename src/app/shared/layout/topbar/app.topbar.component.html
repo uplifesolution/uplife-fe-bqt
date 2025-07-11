@@ -1,0 +1,43 @@
+<div class="layout-topbar">
+  <div class="topbar-start">
+    <app-breadcrumb></app-breadcrumb>
+  </div>
+  <div class="topbar-end">
+    <ul class="topbar-items">
+      @if (showBuilding()) {
+        <li>
+          @if (listBuilding.length) {
+            <p-select [options]="listBuilding"
+                      optionValue="code"
+                      optionLabel="name"
+                      name="building-app"
+                      (onChange)="changeBuilding()"
+                      [(ngModel)]="selectBuilding">
+            </p-select>
+          } @else {
+            <p-skeleton width="10rem" height="2rem"/>
+          }
+        </li>
+      }
+      <li>
+        <p-button [label]="language.toUpperCase()" size="small" [outlined]="true" (click)="toggleLanguage()">
+        </p-button>
+      </li>
+      <li>
+        <p-button size="small" [outlined]="true" [icon]="isDarkMode() ? 'pi pi-moon' : 'pi pi-sun'"
+                  (click)="toggleDarkMode()"></p-button>
+
+      </li>
+      <li *ngIf="showMenuButton" class="menu-button">
+        <button
+          type="button"
+          class="topbar-item menu-button"
+          (click)="toggleMenu()"
+          aria-label="Menu"
+        >
+          <i class="pi pi-bars"></i>
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>

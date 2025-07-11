@@ -1,0 +1,216 @@
+<div class="h-full overflow-auto">
+  <div class="grid grid-cols-3 gap-6 mb-6">
+    <div class="card boxshadow">
+      <ng-container *ngTemplateOutlet="invoiceTmp"></ng-container>
+    </div>
+    <div class="card boxshadow row-span-2 col-start-1">
+      <ng-container *ngTemplateOutlet="vehicleTmp"></ng-container>
+    </div>
+    <div class="card boxshadow row-span-3 col-span-2 col-start-2 row-start-1">
+      <ng-container *ngTemplateOutlet="complaintTypeTmp"></ng-container>
+    </div>
+    <div class="card boxshadow row-span-3 col-span-1 ">
+      <ng-container *ngTemplateOutlet="apartmentStatusTmp"></ng-container>
+    </div>
+    <div class="card boxshadow row-span-3 col-span-1 ">
+      <ng-container *ngTemplateOutlet="residentTmp"></ng-container>
+    </div>
+    <div class="card boxshadow row-span-3 col-span-1 ">
+      <ng-container *ngTemplateOutlet="complaintMonthlyTmp"></ng-container>
+    </div>
+  </div>
+</div>
+
+<ng-template #invoiceTmp>
+  <div class="flex flex-col gap-2">
+    @if (invoice.loading) {
+      <div class="flex justify-between">
+        <p-skeleton width="14rem" height="2rem"></p-skeleton>
+        <p-skeleton width="2rem" height="2rem"></p-skeleton>
+      </div>
+      <p-divider/>
+      <div class="flex justify-end">
+        <p-skeleton width="5rem" height="2rem"></p-skeleton>
+      </div>
+    } @else {
+      <div class="title flex items-center gap-2">
+        <div class="bg-success-50 w-[3rem] h-[3rem] rounded-full p-2 flex justify-center items-center">
+          <i class="icon-menu-services-success-2xl"></i>
+        </div>
+        <div class="flex-1">
+          <div class="text-title">Hoá đơn dịch vụ</div>
+          <div>
+            <span>Kỳ thanh toán:</span><strong>{{ invoice.dashboardDate | date: 'MM/yyyy' }}</strong>
+          </div>
+        </div>
+        <div [routerLink]="['/invoices/management']" class="bg-default-50 px-4 py-2 rounded-full cursor-pointer">
+          <i class="pi pi-angle-right !text-2xl text-default"></i>
+        </div>
+      </div>
+      <p-divider/>
+      <div class="content text-right">
+        <span class="text-2xl"><strong>{{ invoice.data.count }}</strong>/{{ invoice.data.max }}</span>
+      </div>
+    }
+
+  </div>
+</ng-template>
+
+<ng-template #vehicleTmp>
+  <div class="flex flex-col gap-2">
+    <div class="title flex items-center gap-2">
+      <div class="bg-primary-50 w-[3rem] h-[3rem] rounded-full p-2 flex justify-center items-center">
+        <i class="icon-menu-vehicle-primary-2xl"></i>
+      </div>
+      <div class="flex-1">
+        <div class="text-title">Phương tiện</div>
+      </div>
+      <div [routerLink]="['/vehicle']" class="bg-default-50 px-4 py-2 rounded-full cursor-pointer">
+        <i class="pi pi-angle-right !text-2xl text-default"></i>
+      </div>
+    </div>
+    <p-divider/>
+    <div class="content flex flex-col gap-6">
+      <div *ngFor="let item of vehicle.data" class="vehicle-item flex flex-col gap-4">
+        <div class="flex justify-center items-center gap-2">
+          <div
+            class="bg-primary-50 w-[24px] h-[24px] border-primary-200 border-2 rounded-full p-1 flex justify-center items-center">
+            <i [class]="item.icon"></i>
+          </div>
+          <div class="flex-1">
+            <div>{{ item.name }}</div>
+          </div>
+          <div class="font-semibold">{{ item.count }}</div>
+        </div>
+        <p-progressbar styleClass="!h-[4px]" [value]="item.value" [showValue]="false">
+        </p-progressbar>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #complaintTypeTmp>
+  <div class="flex flex-col gap-4">
+    <div class="title flex items-center gap-2">
+      <div class="bg-secondary-50 w-[3rem] h-[3rem] rounded-full p-2 flex justify-center items-center">
+        <i class="icon-menu-complaint-secondary-2xl"></i>
+      </div>
+      <div class="flex-1">
+        <div class="text-title">Phản ánh</div>
+      </div>
+      <div [routerLink]="['/complaint/list']" class="bg-default-50 px-4 py-2 rounded-full cursor-pointer">
+        <i class="pi pi-angle-right !text-2xl text-default"></i>
+      </div>
+    </div>
+    <div class="content flex flex-col gap-4">
+      <div class="flex gap-6">
+        <div class="flex flex-col">
+          <div class="text-label"><span [ngStyle]="{'background': complaintTypeChart.colorAll}"
+                                        class="inline-block w-3 h-3 rounded-full mr-2"></span>Tổng số lượng
+            phản ánh
+          </div>
+          <div class="font-semibold text-primary-800 text-3xl">{{ complaintTypeChart.total | number }}</div>
+        </div>
+        <div class="flex flex-col">
+          <div class="text-label"><span [ngStyle]="{'background': complaintTypeChart.color}"
+                                        class="inline-block w-3 h-3 rounded-full mr-2"></span>Phán ảnh đã xử lý
+          </div>
+          <div class="font-semibold text-primary-800 text-3xl">{{ complaintTypeChart.count | number }}</div>
+        </div>
+        <div class="text-right flex-1">
+          <div class="text-label">Thời gian</div>
+          <div class="text-value text-primary-800">{{ complaintTypeChart.startDate | date: 'dd/MM/yyyy' }}
+            - {{ complaintTypeChart.endDate | date: 'dd/MM/yyyy' }}
+          </div>
+        </div>
+      </div>
+      <div echarts [options]="complaintTypeChart.data" class="w-full h-96"></div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #complaintMonthlyTmp>
+  <div class="flex flex-col gap-4">
+    <div class="title flex items-center gap-2">
+      <div class="bg-secondary-50 w-[3rem] h-[3rem] rounded-full p-2 flex justify-center items-center">
+        <i class="icon-menu-complaint-secondary-2xl"></i>
+      </div>
+      <div class="flex-1">
+        <div class="text-title">Phân tích phản ánh</div>
+      </div>
+      <div [routerLink]="['/complaint/list']" class="bg-default-50 px-4 py-2 rounded-full cursor-pointer">
+        <i class="pi pi-angle-right !text-2xl text-default"></i>
+      </div>
+    </div>
+    <div class="content flex flex-col gap-2">
+      <div class="text-right">
+        <div class="text-label">Thời gian</div>
+        <div class="text-value text-primary-800">{{ complaintMonthlyChart.startDate | date: 'MM/yyyy' }}
+          - {{ complaintMonthlyChart.endDate | date: 'MM/yyyy' }}
+        </div>
+      </div>
+      <p-divider/>
+      <div class="text-label text-right">
+        <span [ngStyle]="{'background': complaintMonthlyChart.color}"
+              class="inline-block w-3 h-3 rounded-full mr-2"></span>Tổng số lượng phản ánh
+      </div>
+      <div echarts [options]="complaintMonthlyChart.data" class="w-full h-96"></div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #apartmentStatusTmp>
+  <div class="flex flex-col gap-4">
+    <div class="title flex items-center gap-2">
+      <div class="bg-warning-50 w-[3rem] h-[3rem] rounded-full p-2 flex justify-center items-center">
+        <i class="icon-menu-apartment-warning-2xl"></i>
+      </div>
+      <div class="flex-1">
+        <div class="text-title">Căn hộ</div>
+      </div>
+      <div [routerLink]="['/apartment']" class="bg-default-50 px-4 py-2 rounded-full cursor-pointer">
+        <i class="pi pi-angle-right !text-2xl text-default"></i>
+      </div>
+    </div>
+    <div class="content flex flex-col gap-2">
+      <div class="">
+        <div class="text-label">Tổng số căn hộ</div>
+        <div class="text-value font-semibold text-primary-800">{{ apartmentStatusChart.total | number }}
+        </div>
+      </div>
+      <p-divider/>
+      <div echarts [options]="apartmentStatusChart.data" class="w-full h-96"></div>
+      <div class="legend grid grid-cols-2">
+        <div></div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #residentTmp>
+  <div class="flex flex-col gap-4">
+    <div class="title flex items-center gap-2">
+      <div class="bg-thirdary-50 w-[3rem] h-[3rem] rounded-full p-2 flex justify-center items-center">
+        <i class="icon-menu-resident-thirdary-2xl"></i>
+      </div>
+      <div class="flex-1">
+        <div class="text-title">Cư dân</div>
+      </div>
+      <div [routerLink]="['/resident']" class="bg-default-50 px-4 py-2 rounded-full cursor-pointer">
+        <i class="pi pi-angle-right !text-2xl text-default"></i>
+      </div>
+    </div>
+    <div class="content flex flex-col gap-2">
+      <div class="">
+        <div class="text-label">Tổng số cư dân</div>
+        <div class="text-value font-semibold text-primary-800">{{ residentChart.total | number }}
+        </div>
+      </div>
+      <p-divider/>
+      <div echarts [options]="residentChart.data" class="w-full h-96"></div>
+      <div class="legend grid grid-cols-2">
+        <div></div>
+      </div>
+    </div>
+  </div>
+</ng-template>

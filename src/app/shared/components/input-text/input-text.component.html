@@ -1,0 +1,27 @@
+<div class="flex-auto">
+  <label *ngIf="showLabel" class="block font-semibold mb-2">
+    <span class="mr-1">{{ label }}</span>
+    <span *ngIf="checkRequire" class="text-danger">*</span>
+  </label>
+  @if (type === 'password') {
+    <p-password (blur)="inputBlur()" [formControl]="control" [feedback]="false" styleClass="w-full"
+                inputStyleClass="w-full"/>
+  } @else if (rightIcon) {
+    <p-iconfield>
+      <input (blur)="inputBlur()" class="w-full" type="text" pInputText [formControl]="control"/>
+      <p-inputicon (click)="clickIcon()" [ngClass]="{'cursor-pointer': !control.disabled}" [styleClass]="rightIcon"/>
+    </p-iconfield>
+  } @else if (leftIcon) {
+    <p-iconfield>
+      <p-inputicon (click)="clickIcon()" [ngClass]="{'cursor-pointer': !control.disabled}" [styleClass]="leftIcon"/>
+      <input (blur)="inputBlur()" class="w-full" type="text" pInputText [formControl]="control"/>
+    </p-iconfield>
+  } @else {
+    <input (blur)="inputBlur()" type="text" pInputText class="w-full" [formControl]="control"/>
+  }
+  <div class="validator-errors">
+    <small *ngIf="errors" class="error-msg block fadeinup animation-duration-300">
+      <span class="block text-danger">{{ getError().key | translate: getError().required }}</span>
+    </small>
+  </div>
+</div>

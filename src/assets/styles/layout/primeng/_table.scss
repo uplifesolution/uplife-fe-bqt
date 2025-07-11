@@ -1,0 +1,25 @@
+.p-datatable-thead {
+  & > tr > th {
+    border-width: 0 0 0 0 !important;
+    position: relative;
+
+    &::before {
+      content: '';
+      width: 1px;
+      top: 0;
+      bottom: 0;
+      background: linear-gradient(to top, #0000000c, #00000000);
+      //background-color: #3a354142;
+      position: absolute;
+      right: 0;
+    }
+  }
+}
+
+.p-datatable-tbody:has(+ .p-datatable-tfoot) > tr:last-child > td {
+  border-width: 0 0 1px 0 !important;
+}
+
+.p-datatable-tfoot > tr > td {
+  border-width: 0 0 1px 0 !important;
+}

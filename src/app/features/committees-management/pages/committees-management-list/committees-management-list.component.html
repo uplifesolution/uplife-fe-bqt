@@ -1,0 +1,204 @@
+<div class="card flex flex-col h-full">
+  <div class="page-title">
+    <div class="page-title-left">
+      <span class="text-primary-800 font-semibold text-xl">{{
+        'committee.subTitle.list' | translate
+      }}</span>
+    </div>
+    <div class="page-title-right">
+      <p-button
+      *ngIf="canAccess(Constants.Action_Create) || true"
+      variant="outlined"
+      severity="secondary"
+      label="{{ 'button.create' | translate }}"
+      iconPos="right"
+      icon="text-xl pi pi-plus"
+      (onClick)="visibleDrawerCreate = true"
+      ></p-button>
+      <p-button
+        (onClick)="visibleDrawerSearch = !visibleDrawerSearch"
+        variant="outlined"
+        severity="primary"
+        label="{{ 'button.search' | translate }}"
+        iconPos="right"
+        icon="text-xl pi pi-search"
+      ></p-button>
+      <p-button (onClick)="reloadData()" variant="outlined" icon="pi pi-refresh"></p-button>
+    </div>
+  </div>
+  <div class="flex-1 overflow-hidden">
+    <p-table
+      scrollHeight="flex"
+      [value]="dataTable.content"
+      [scrollable]="true"
+      dataKey="code"
+      [(contextMenuSelection)]="selectedItem"
+      [contextMenu]="cm"
+    >
+      <ng-template #header>
+        <tr>
+          <th>{{ 'committee.label.name' | translate }}</th>
+          <th>{{ 'committee.label.phone' | translate }}</th>
+          <th>{{ 'committee.label.status' | translate }}</th>
+          <th>{{ 'committee.label.title' | translate }}</th>
+          <th>{{ 'committee.label.startDate' | translate }}</th>
+          <th>{{ 'committee.label.endDate' | translate }}</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-item>
+        @if (!dataTable.loading) {
+          <tr [pContextMenuRow]="item" (dblclick)="viewDetail(item.id)">
+            <td>{{ item.fullName }}</td>
+            <td>
+              <a
+                class="text-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                [href]="'https://zalo.me/' + item?.phone"
+                >{{ item?.phone }}
+              </a>
+            </td>
+            <td>
+              <div class="flex items-center gap-2">
+                @switch (item.active) {
+                  @case (true) {
+                    <i class="pi pi-check-circle text-success text-xl"></i>
+                  }
+                  @default {
+                    <i class="pi pi-times-circle text-danger text-xl"></i>
+                  }
+                }
+                <span>{{ item.activeName }}</span>
+              </div>
+            </td>
+            <td>{{ item?.titleName }}</td>
+            <td>{{ item?.startDate | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ item?.endDate | date: 'dd/MM/yyyy' }}</td>
+          </tr>
+        } @else {
+          <tr>
+            <td>
+              <p-skeleton />
+            </td>
+            <td>
+              <p-skeleton />
+            </td>
+            <td>
+              <p-skeleton />
+            </td>
+            <td>
+              <p-skeleton />
+            </td>
+            <td>
+              <p-skeleton />
+            </td>
+            <td>
+              <p-skeleton />
+            </td>
+          </tr>
+        }
+      </ng-template>
+    </p-table>
+  </div>
+
+  <p-paginator
+    styleClass="!justify-end"
+    (onPageChange)="onPageChange($event)"
+    [first]="dataTable.first"
+    [rows]="dataTable.size"
+    [totalRecords]="dataTable.totalElements"
+    [rowsPerPageOptions]="[10, 20, 30]"
+  />
+  <p-contextMenu #cm [model]="itemsMenu" appendTo="body">
+    <ng-template #item let-item>
+      <a pRipple class="flex items-center p-contextmenu-item-link">
+        <span [class]="item.icon"></span>
+        <span class="ml-2">{{ item.label | translate }}</span>
+      </a>
+    </ng-template>
+  </p-contextMenu>
+</div>
+
+<p-drawer
+  [(visible)]="visibleDrawerSearch"
+  header="{{ 'committee.subTitle.search' | translate }}"
+  styleClass="w-34-5-rem"
+  position="right"
+>
+  <div [formGroup]="formSearch">
+    <m-text
+      class="mb-6 block"
+      label="{{ 'committee.label.name' | translate }}"
+      formControlName="fullName"
+    ></m-text>
+    <m-select
+      class="mb-6 block"
+      label="{{ 'committee.label.status' | translate }}"
+      formControlName="active"
+      optionValue="value"
+      [options]="statusOptions"
+    ></m-select>
+  </div>
+  <div class="flex justify-end">
+    <p-button
+      [disabled]="dataTable.loading"
+      variant="outlined"
+      label="{{ 'button.search' | translate }}"
+      icon="text-xl pi pi-search"
+      iconPos="right"
+      (onClick)="search(true)"
+    ></p-button>
+  </div>
+</p-drawer>
+<p-drawer
+  [(visible)]="visibleDrawerCreate"
+  header="{{ 'committee.subTitle.createCommittee' | translate }}"
+  styleClass="w-34-5-rem"
+  position="right"
+>
+  <committee-create #formCreate (changeData)="onChangeData($event)"></committee-create>
+  <ng-template #footer>
+    <p-button
+      severity="info"
+      variant="outlined"
+      label="{{ 'button.cancel' | translate }}"
+      icon="text-xl pi pi-times"
+      iconPos="right"
+      (onClick)="visibleDrawerCreate = false"
+    ></p-button>
+    <p-button
+      [disabled]="formCreate.loading"
+      variant="outlined"
+      label="{{ 'button.save' | translate }}"
+      icon="text-xl pi pi-check"
+      iconPos="right"
+      (onClick)="formCreate.onSave()"
+    ></p-button>
+  </ng-template>
+</p-drawer>
+<p-drawer
+  [(visible)]="visibleDrawerEdit"
+  header="{{ 'committee.subTitle.updateCommittee' | translate }}"
+  styleClass="w-34-5-rem"
+  position="right"
+>
+  <committee-create #formEdit (changeData)="onChangeData($event)"></committee-create>
+  <ng-template #footer>
+    <p-button
+      severity="info"
+      variant="outlined"
+      label="{{ 'button.cancel' | translate }}"
+      icon="text-xl pi pi-times"
+      iconPos="right"
+      (onClick)="visibleDrawerEdit = false"
+    ></p-button>
+    <p-button
+      [disabled]="formEdit.loading"
+      variant="outlined"
+      label="{{ 'button.save' | translate }}"
+      icon="text-xl pi pi-check"
+      iconPos="right"
+      (onClick)="formEdit.onSave()"
+    ></p-button>
+  </ng-template>
+</p-drawer>

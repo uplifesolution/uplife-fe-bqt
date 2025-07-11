@@ -1,0 +1,179 @@
+@use "mixins" as *;
+
+.layout-colorscheme-menu {
+  --menu-bg: var(--card-background);
+  --root-menuitem-text-color: var(--p-surface-400);
+  --menuitem-text-color: var(--text-color);
+  --menuitem-icon-color: var(--primary-color);
+  --menuitem-hover-bg-color: var(--p-primary-50);
+  --menuitem-hover-text-color: var(--primary-color);
+  --border-left-submenu: var(--p-primary-300)
+}
+
+.layout-sidebar {
+  position: fixed;
+  height: 100%;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-width);
+  background: var(--menu-bg);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+
+  .sidebar-header {
+    padding: 1rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .layout-menu-container {
+    overflow: auto;
+    flex: 1;
+    padding: 0 1rem 1.5rem 1rem;
+  }
+
+  .sidebar-footer {
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+
+
+    .info-short-profile {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      gap: .3125rem;
+
+      .fullName {
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+
+      .subName {
+        font-size: 0.75rem;
+        color: var(--p-surface-400);
+      }
+
+      .title {
+        display: flex;
+        align-items: center;
+        color: var(--primary-color);
+        font-weight: 600;
+      }
+    }
+  }
+
+  .logo {
+    display: flex;
+    justify-content: center;
+  }
+
+  .pi-sign-out {
+    color: var(--p-danger-600);
+  }
+}
+
+.layout-root-menuitem > .layout-menuitem-root-text {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--root-menuitem-text-color);
+  padding: 0.5rem 0;
+}
+
+.layout-root-menuitem > a {
+  display: none;
+}
+
+.layout-menu {
+  margin: 0;
+
+  a {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  ul ul {
+    border-left: 1px solid var(--border-left-submenu);
+  }
+
+  li {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.layout-menu a.active-menuitem > .layout-submenu-toggler {
+  transform: rotate(-180deg);
+}
+
+.layout-menu li.active-menuitem > a .layout-submenu-toggler {
+  transform: rotate(180deg);
+}
+
+.layout-menu ul {
+  margin: .25rem 0 0 0;
+  padding: 0 0 0 0.75rem;
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+}
+
+.layout-menu ul a {
+  display: flex;
+  align-items: center;
+  position: relative;
+  outline: 0 none;
+  color: var(--menuitem-text-color);
+  background-color: var(--card-background);
+  cursor: pointer;
+  padding: .75rem 1rem;
+}
+
+.layout-menu ul a .layout-menuitem-icon {
+  flex-shrink: 0;
+  margin-right: 0.5rem;
+  //color: $text-primary;
+  background: var(--menuitem-text-color);
+  order: 1;
+  height: 20px;
+  width: 20px;
+}
+
+.layout-menu ul a .layout-menuitem-text {
+  //color: $text-primary;
+  order: 2;
+}
+
+.layout-menu ul a .layout-submenu-toggler {
+  margin-left: auto;
+  order: 3;
+  transition: transform 0.2s;
+  font-size: 17px;
+}
+
+.layout-menu ul a.active-route {
+  background-color: var(--menuitem-hover-bg-color);
+  color: var(--menuitem-hover-text-color);
+  border-radius: 8px;
+  font-weight: 600;
+
+  .layout-menuitem-icon {
+    background-color: var(--menuitem-hover-text-color);
+  }
+}
+
+.layout-menu ul a:hover {
+  background-color: var(--menuitem-hover-bg-color);
+  color: var(--menuitem-hover-text-color);
+  border-radius: 8px;
+  font-weight: 600;
+
+  .layout-menuitem-icon {
+    background-color: var(--menuitem-hover-text-color);
+  }
+}

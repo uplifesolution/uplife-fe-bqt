@@ -1,0 +1,71 @@
+<div class="card h-full overflow-auto">
+  <div class="section">
+    <div class="section-title">
+      <div class="title">{{ 'breadcrumb.votingEventDetail' | translate }}</div>
+      <div>
+        <p-button severity="primary"
+                  variant="outlined"
+                  label="{{ 'button.update' | translate }}"
+                  iconPos="right"
+                  icon="pi pi-pen-to-square"
+                  (click)="openFormEdit()"
+                  *ngIf="canAccess(Constants.Action_Update)"
+        ></p-button>
+        <p-button
+          class="ml-2"
+          *ngIf="data?.statusDTO?.code === 'DRAFT' && canAccess(Constants.Action_Update)"
+          variant="outlined" severity="secondary"
+          label="{{ 'button.sendVote' | translate }}" iconPos="right"
+          icon="icon-document-secondary-2xl"
+          (click)="sendVote()"
+        ></p-button>
+      </div>
+    </div>
+    <div class="section-content">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="flex flex-col">
+          <div class="text-label">{{ 'votingEvent.label.name' | translate }}</div>
+          <div class="text-value">{{ data?.name }}</div>
+        </div>
+        <div class="flex flex-col">
+          <div class="text-label">{{ 'votingEvent.label.startDate' | translate }}</div>
+          <div class="text-value">{{ data?.startDate | date: 'dd/MM/YYYY' }}</div>
+        </div>
+        <div class="flex flex-col">
+          <div class="text-label">{{ 'votingEvent.label.endDate' | translate }}</div>
+          <div class="text-value">{{ data?.endDate | date: 'dd/MM/YYYY' }}</div>
+        </div>
+        <div class="flex flex-col">
+          <div class="text-label">{{ 'votingEvent.label.type' | translate }}</div>
+          <div class="text-value">{{ data?.votingEventTypeDTO?.name }}</div>
+        </div>
+        <div class="flex flex-col">
+          <div class="text-label">{{ 'votingEvent.label.status' | translate }}</div>
+          <div class="text-value">{{ data?.statusDTO?.name }}</div>
+        </div>
+        <div class="flex flex-col">
+          <div class="text-label">{{ 'votingEvent.label.googleForm' | translate }}</div>
+          <a (click)="openGoogleForm(data?.googleFormLink!)" class="text-value text-link">{{ data?.googleFormLink }}</a>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 my-4">
+        <div class="text-label">{{ 'votingEvent.label.content' | translate }}</div>
+        <div class="text-value">{{ data?.content }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<p-drawer [(visible)]="visibleEdit" header="{{ 'votingEvent.subTitle.update' | translate }}"
+          styleClass="w-34-5-rem"
+          position="right">
+  <vote-create #formEdit [listVotingType]="listVotingType" (changeData)="onChangeData($event)"></vote-create>
+  <ng-template #footer>
+    <p-button severity="info" variant="outlined" label="{{ 'button.cancel' | translate }}" icon="text-xl pi pi-times"
+              iconPos="right"
+              (click)="visibleEdit = false"></p-button>
+    <p-button variant="outlined" label="{{ 'button.save' | translate }}" icon="text-xl pi pi-check" iconPos="right"
+              (click)="formEdit.onSave()"></p-button>
+  </ng-template>
+</p-drawer>

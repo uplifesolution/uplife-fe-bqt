@@ -1,0 +1,191 @@
+<div class="card flex flex-col h-full">
+  <div class="page-title">
+    <div class="page-title-left">
+      <span class="text-primary-800 font-semibold text-xl">{{
+        'apartment.subTitle.list' | translate
+      }}</span>
+    </div>
+    <div class="page-title-right">
+      <p-button
+        *ngIf="canAccess(Constants.Action_Create)"
+        variant="outlined"
+        severity="secondary"
+        label="{{ 'button.create' | translate }}"
+        iconPos="right"
+        icon="text-xl pi pi-plus"
+        (onClick)="visibleDrawerCreate = true"
+      ></p-button>
+      <p-button
+        (onClick)="visibleDrawer = !visibleDrawer"
+        variant="outlined"
+        severity="primary"
+        label="{{ 'button.search' | translate }}"
+        iconPos="right"
+        icon="text-xl pi pi-search"
+      ></p-button>
+      <p-button (onClick)="reloadData()" variant="outlined" icon="pi pi-refresh"></p-button>
+    </div>
+  </div>
+  <div class="flex-1 overflow-hidden">
+    <p-table
+      scrollHeight="flex"
+      [value]="dataTable.content"
+      [scrollable]="true"
+      dataKey="code"
+      [(contextMenuSelection)]="selectedItem"
+      [contextMenu]="cm"
+    >
+      <ng-template #header>
+        <tr>
+          <th>{{ 'apartment.label.name' | translate }}</th>
+          <th>{{ 'apartment.label.code' | translate }}</th>
+          <th>{{ 'apartment.label.status' | translate }}</th>
+          <th>{{ 'apartment.label.floor' | translate }}</th>
+          <th>{{ 'apartment.label.building' | translate }}</th>
+          <th>{{ 'apartment.label.area' | translate }}</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-item>
+        @if (!dataTable.loading) {
+          <tr [pContextMenuRow]="item" (dblclick)="viewDetail(item.id)">
+            <td>{{ item.apartmentNumber }}</td>
+            <td>{{ item.apartmentCode }}</td>
+            <td>
+              <div class="flex items-center gap-2">
+                @switch (item.status) {
+                  @case ('FOR_SALE') {
+                    <i class="pi icon-apartment-for-sale-thirdary-2xl"></i>
+                  }
+                  @case ('FOR_RENT') {
+                    <i class="pi icon-apartment-for-rent-secondary-2xl"></i>
+                  }
+                  @case ('OCCUPIED') {
+                    <i class="pi icon-apartment-occupied-success-2xl"></i>
+                  }
+                  @case ('VACANT') {
+                    <i class="pi icon-apartment-vacant-default-2xl"></i>
+                  }
+                }
+                <span>{{ item.status | getLabel: { options: listStatus.data } }}</span>
+              </div>
+            </td>
+            <td>{{ item?.floor }}</td>
+            <td>{{ item?.buildingBlock }}</td>
+            <td>{{ item?.area }}</td>
+          </tr>
+        } @else {
+          <tr>
+            <td>
+              <p-skeleton/>
+            </td>
+            <td>
+              <p-skeleton/>
+            </td>
+            <td>
+              <p-skeleton/>
+            </td>
+            <td>
+              <p-skeleton/>
+            </td>
+            <td>
+              <p-skeleton/>
+            </td>
+            <td>
+              <p-skeleton/>
+            </td>
+          </tr>
+        }
+      </ng-template>
+    </p-table>
+  </div>
+
+  <p-paginator
+    styleClass="!justify-end"
+    (onPageChange)="onPageChange($event)"
+    [first]="dataTable.first"
+    [rows]="dataTable.size"
+    [totalRecords]="dataTable.totalElements"
+    [rowsPerPageOptions]="[10, 20, 30]"
+  />
+  <p-contextMenu #cm [model]="items" appendTo="body">
+    <ng-template #item let-item>
+      <a pRipple class="flex items-center p-contextmenu-item-link">
+        <span [class]="item.icon"></span>
+        <span class="ml-2">{{ item.label | translate }}</span>
+      </a>
+    </ng-template>
+  </p-contextMenu>
+</div>
+
+<p-drawer
+  [(visible)]="visibleDrawer"
+  header="{{ 'apartment.subTitle.search' | translate }}"
+  styleClass="w-34-5-rem"
+  position="right"
+>
+  <div [formGroup]="formSearch">
+    <m-text
+      class="mb-6 block"
+      label="{{ 'apartment.label.code' | translate }}"
+      formControlName="apartmentCode"
+    ></m-text>
+    <m-text
+      class="mb-6 block"
+      label="{{ 'apartment.label.name' | translate }}"
+      formControlName="apartmentNumber"
+    ></m-text>
+    <m-select
+      class="mb-6 block"
+      label="{{ 'apartment.label.status' | translate }}"
+      formControlName="status"
+      [options]="listStatus.data"
+      [loading]="listStatus.loading"
+    ></m-select>
+  </div>
+  <div class="flex justify-end">
+    <p-button
+      [disabled]="dataTable.loading"
+      variant="outlined"
+      label="{{ 'button.search' | translate }}"
+      icon="text-xl pi pi-search"
+      iconPos="right"
+      (onClick)="search(true)"
+    ></p-button>
+  </div>
+</p-drawer>
+<p-drawer
+  [(visible)]="visibleDrawerCreate"
+  header="{{ 'apartment.subTitle.create' | translate }}"
+  styleClass="w-34-5-rem"
+  position="right"
+>
+  <apartment-form #formCreate (changeData)="onChangeData($event)"></apartment-form>
+  <ng-template #footer>
+    <p-button
+      [disabled]="formCreate.loading"
+      variant="outlined"
+      label="{{ 'button.save' | translate }}"
+      icon="text-xl pi pi-check"
+      iconPos="right"
+      (onClick)="formCreate.onSave()"
+    ></p-button>
+  </ng-template>
+</p-drawer>
+<p-drawer
+  [(visible)]="visibleDrawerEdit"
+  header="{{ 'apartment.subTitle.update' | translate }}"
+  styleClass="w-34-5-rem"
+  position="right"
+>
+  <apartment-form #formEdit type="update" (changeData)="onChangeData($event)"></apartment-form>
+  <ng-template #footer>
+    <p-button
+      [disabled]="formEdit.loading"
+      variant="outlined"
+      label="{{ 'button.save' | translate }}"
+      icon="text-xl pi pi-check"
+      iconPos="right"
+      (onClick)="formEdit.onSave()"
+    ></p-button>
+  </ng-template>
+</p-drawer>

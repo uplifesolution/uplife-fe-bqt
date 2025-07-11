@@ -1,0 +1,188 @@
+<div class="grid grid-cols-3 gap-4 h-full">
+  <div class="col-span-2 card overflow-auto">
+    <div class="section">
+      <div class="section-title">
+        <div class="title">{{ 'building.subTitle.buildingInfo' | translate }}</div>
+        <div>
+          <p-button
+            severity="primary"
+            variant="outlined"
+            label="{{ 'button.update' | translate }}"
+            iconPos="right"
+            icon="pi pi-pen-to-square"
+            (click)="openFormEdit()"
+            (keydown.enter)="openFormEdit()"
+            *ngIf="canAccess(Constants.Action_Update)"
+          ></p-button>
+        </div>
+      </div>
+      <div class="section-content">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'building.label.code' | translate }}</div>
+            <div class="text-value">{{ data?.code }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'building.label.name' | translate }}</div>
+            <div class="text-value">{{ data?.name }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'building.label.status' | translate }}</div>
+            <div class="text-value">{{ data?.status?.name }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'building.label.startDate' | translate }}</div>
+            <div class="text-value">{{ data?.activeDate | date: 'dd/MM/yyyy' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section mt-6">
+      <div class="section-title">
+        <div class="title">{{ 'building.subTitle.addressInfo' | translate }}</div>
+      </div>
+      <div class="section-content">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'investors.label.province' | translate }}</div>
+            <div class="text-value">{{ data?.province?.name }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'investors.label.ward' | translate }}</div>
+            <div class="text-value">{{ data?.ward?.name }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'building.label.address' | translate }}</div>
+            <div class="text-value">{{ data?.address }}</div>
+          </div>
+        </div>
+
+        @if (data?.managementBoard) {
+          <div class="section mt-6">
+            <div class="section-title">
+              <div class="title">{{ 'building.subTitle.managementBoardInfo' | translate }}</div>
+            </div>
+            <div class="section-content">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                <div class="flex flex-col">
+                  <div class="text-label">{{ 'boards.label.code' | translate }}</div>
+                  <div class="text-value"><a class="text-link"
+                                             [routerLink]="getLinkManagementBoard()">{{ data?.managementBoard?.code }}</a>
+                  </div>
+                </div>
+                <div class="flex flex-col">
+                  <div class="text-label">{{ 'boards.label.name' | translate }}</div>
+                  <div class="text-value">{{ data?.managementBoard?.name }}</div>
+                </div>
+                <div class="flex flex-col">
+                  <div class="text-label">{{ 'boards.label.representativeName' | translate }}</div>
+                  <div class="text-value">{{ data?.managementBoard?.representativeName }}</div>
+                </div>
+                <div class="flex flex-col">
+                  <div class="text-label">{{ 'boards.label.hotline' | translate }}:</div>
+                  <div class="text-value">
+                    <a
+                      class="text-link"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      [href]="'https://zalo.me/' + data?.managementBoard?.hotline"
+                    >
+                      {{ data?.managementBoard?.hotline }}
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="section mt-6">
+      <div class="section-title">
+        <div class="title">{{ 'building.subTitle.services' | translate }}</div>
+      </div>
+      <div class="flex-1 overflow-hidden">
+        <p-table
+          scrollHeight="flex"
+          [value]="servicesTable.content"
+          [scrollable]="true"
+        >
+          <ng-template #header>
+            <tr>
+              <th style="width: 5rem">STT</th>
+              <th>{{ 'building.label.serviceName' | translate }}</th>
+              <th>{{ 'building.label.quantity' | translate }}</th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-item let-i="rowIndex">
+            @if (!servicesTable.loading) {
+              <tr>
+                <td>{{ i + 1 + servicesTable.first }}</td>
+                <td>{{ item.serviceName }}</td>
+                <td>{{ item.quantity }}</td>
+              </tr>
+            } @else {
+              <tr>
+                <td>
+                  <p-skeleton/>
+                </td>
+                <td>
+                  <p-skeleton/>
+                </td>
+                <td>
+                  <p-skeleton/>
+                </td>
+              </tr>
+            }
+          </ng-template>
+        </p-table>
+      </div>
+        <p-paginator
+          styleClass="!justify-end"
+          (onPageChange)="onPageChange($event)"
+          [first]="servicesTable.first"
+          [rows]="servicesTable.size"
+          [totalRecords]="this.data?.services?.length"
+          [rowsPerPageOptions]="[10, 20, 30]"
+        />
+    </div>
+  </div>
+  <div class="card overflow-hidden">
+    <div class="h-full overflow-auto">
+      <ecm-folder [uuidEcmFolder]="data?.uuidEcmFolder!"></ecm-folder>
+    </div>
+  </div>
+</div>
+
+<p-drawer
+  [(visible)]="visibleEdit"
+  header="{{ 'building.subTitle.update' | translate }}"
+  styleClass="w-34-5-rem"
+  position="right"
+>
+  <building-form
+    #formEdit
+    [statusOptions]="statusOptions"
+    (changeData)="onChangeData($event)"
+  ></building-form>
+  <ng-template #footer>
+    <p-button
+      severity="info"
+      variant="outlined"
+      label="{{ 'button.cancel' | translate }}"
+      icon="text-xl pi pi-times"
+      iconPos="right"
+      (click)="visibleEdit = false"
+      (keydown.enter)="visibleEdit = false"
+    ></p-button>
+    <p-button
+      variant="outlined"
+      label="{{ 'button.save' | translate }}"
+      icon="text-xl pi pi-check"
+      iconPos="right"
+      (click)="formEdit.onSave()"
+      (keydown.enter)="formEdit.onSave()"
+    ></p-button>
+  </ng-template>
+</p-drawer>

@@ -1,0 +1,213 @@
+<div class="card flex flex-col h-full">
+  <div class="page-title">
+    <div class="page-title-left">
+      <span class="text-primary-800 font-semibold text-xl">{{
+        'votingEvent.subTitle.list' | translate
+      }}</span>
+    </div>
+    <div class="page-title-right">
+      <p-button
+      *ngIf="canAccess(Constants.Action_Create)"
+      variant="outlined"
+      severity="secondary"
+      label="{{ 'button.create' | translate }}"
+      iconPos="right"
+      icon="text-xl pi pi-plus"
+      (click)="visibleDrawerCreate = true"
+      ></p-button>
+      <p-button
+        (click)="visibleDrawerSearch = !visibleDrawerSearch"
+        variant="outlined"
+        severity="primary"
+        label="{{ 'button.search' | translate }}"
+        iconPos="right"
+        icon="text-xl pi pi-search"
+      ></p-button>
+      <p-button (click)="reloadData()" variant="outlined" icon="pi pi-refresh"></p-button>
+    </div>
+  </div>
+  <div class="flex-1 overflow-hidden">
+    <p-table
+      scrollHeight="flex"
+      [value]="dataTable.content"
+      [scrollable]="true"
+      dataKey="code"
+      [(contextMenuSelection)]="selectedItem"
+      [contextMenu]="cm"
+    >
+      <ng-template #header>
+        <tr>
+          <th>{{ 'votingEvent.label.name' | translate }}</th>
+          <th>{{ 'votingEvent.label.type' | translate }}</th>
+          <th class="">{{ 'votingEvent.label.status' | translate }}</th>
+          <th>{{ 'votingEvent.label.startDate' | translate }}</th>
+          <th>{{ 'votingEvent.label.endDate' | translate }}</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-item>
+        @if (!dataTable.loading) {
+          <tr [pContextMenuRow]="item" (dblclick)="viewDetail(item.id)">
+            <td>{{ item.name }}</td>
+            <td>{{ getType(item?.type) }}</td>
+            <td>
+              <div class="flex items-center gap-2">
+                @switch (item.status) {
+                  @case ('DRAFT') {
+                    <i class="icon-draft-default-xl"></i>
+                  }
+                  @case ('VOTING') {
+                    <i class="icon-time-pending-secondary-xl"></i>
+                  }
+                  @case ('ENDED') {
+                    <i class="pi pi-check-circle text-secondary text-xl"></i>
+                  }
+                }
+                <span>{{ item.statusName }}</span>
+              </div>
+            </td>
+            <td>{{ item?.startDate | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ item?.endDate | date: 'dd/MM/yyyy' }}</td>
+          </tr>
+        } @else {
+          <tr>
+            <td>
+              <p-skeleton />
+            </td>
+            <td>
+              <p-skeleton />
+            </td>
+            <td>
+              <p-skeleton />
+            </td>
+            <td>
+              <p-skeleton />
+            </td>
+            <td>
+              <p-skeleton />
+            </td>
+          </tr>
+        }
+      </ng-template>
+    </p-table>
+  </div>
+
+  <p-paginator
+    styleClass="!justify-end"
+    (onPageChange)="onPageChange($event)"
+    [first]="dataTable.first"
+    [rows]="dataTable.size"
+    [totalRecords]="dataTable.totalElements"
+    [rowsPerPageOptions]="[10, 20, 30]"
+  />
+  <p-contextMenu #cm [model]="itemsMenu" appendTo="body">
+    <ng-template #item let-item>
+      <a pRipple class="flex items-center p-contextmenu-item-link">
+        <span [class]="item.icon"></span>
+        <span class="ml-2">{{ item.label | translate }}</span>
+      </a>
+    </ng-template>
+  </p-contextMenu>
+</div>
+
+<p-drawer
+  [(visible)]="visibleDrawerSearch"
+  header="{{ 'votingEvent.subTitle.search' | translate }}"
+  styleClass="w-34-5-rem"
+  position="right"
+>
+  <div [formGroup]="formSearch">
+    <m-text
+      class="mb-6 block"
+      label="{{ 'votingEvent.label.name' | translate }}"
+      formControlName="name"
+    ></m-text>
+    <m-select
+      class="mb-6 block"
+      label="{{ 'votingEvent.label.type' | translate }}"
+      formControlName="type"
+      [options]="listVotingType.data"
+      [loading]="listVotingType.loading"
+    ></m-select>
+    <m-select
+      class="block"
+      label="{{ 'votingEvent.label.status' | translate }}"
+      formControlName="status"
+      [options]="listVotingEventStatus.data"
+      [loading]="listVotingEventStatus.loading"
+    ></m-select>
+  </div>
+  <div class="flex justify-end">
+    <p-button
+      [disabled]="dataTable.loading"
+      variant="outlined"
+      label="{{ 'button.search' | translate }}"
+      icon="text-xl pi pi-search"
+      iconPos="right"
+      (click)="search(true)"
+    ></p-button>
+  </div>
+</p-drawer>
+<p-drawer
+  [(visible)]="visibleDrawerCreate"
+  header="{{ 'votingEvent.subTitle.create' | translate }}"
+  styleClass="w-34-5-rem"
+  position="right"
+>
+  <vote-create
+    #formCreate
+    (changeData)="onChangeData($event)"
+    [listVotingEventStatus]="listVotingEventStatus"
+    [listVotingType]="listVotingType"
+    [listVotingStatus]="listVotingStatus"
+  ></vote-create>
+  <ng-template #footer>
+    <p-button
+      severity="info"
+      variant="outlined"
+      label="{{ 'button.cancel' | translate }}"
+      icon="text-xl pi pi-times"
+      iconPos="right"
+      (click)="visibleDrawerCreate = false"
+    ></p-button>
+    <p-button
+      [disabled]="formCreate.loading"
+      variant="outlined"
+      label="{{ 'button.save' | translate }}"
+      icon="text-xl pi pi-check"
+      iconPos="right"
+      (click)="formCreate.onSave()"
+    ></p-button>
+  </ng-template>
+</p-drawer>
+<p-drawer
+  [(visible)]="visibleDrawerEdit"
+  header="{{ 'votingEvent.subTitle.update' | translate }}"
+  styleClass="w-34-5-rem"
+  position="right"
+>
+  <vote-create
+    #formEdit
+    (changeData)="onChangeData($event)"
+    [listVotingEventStatus]="listVotingEventStatus"
+    [listVotingType]="listVotingType"
+    [listVotingStatus]="listVotingStatus"
+  ></vote-create>
+  <ng-template #footer>
+    <p-button
+      severity="info"
+      variant="outlined"
+      label="{{ 'button.cancel' | translate }}"
+      icon="text-xl pi pi-times"
+      iconPos="right"
+      (click)="visibleDrawerEdit = false"
+    ></p-button>
+    <p-button
+      [disabled]="formEdit.loading"
+      variant="outlined"
+      label="{{ 'button.save' | translate }}"
+      icon="text-xl pi pi-check"
+      iconPos="right"
+      (click)="formEdit.onSave()"
+    ></p-button>
+  </ng-template>
+</p-drawer>

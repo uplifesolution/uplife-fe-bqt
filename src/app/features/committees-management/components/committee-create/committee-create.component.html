@@ -1,0 +1,39 @@
+<div class="mb-6 font-semibold text-primary">
+  {{ 'committee.subTitle.committeeInfo' | translate }}
+</div>
+<div [formGroup]="form" class="flex flex-col gap-6">
+  <m-text class="block" label="{{ 'committee.label.name' | translate }}" formControlName="fullName">
+  </m-text>
+
+  <m-text
+    class="block"
+    label="{{ 'committee.label.phone' | translate }}"
+    formControlName="phone"
+  ></m-text>
+
+  <m-select
+    class="block"
+    label="{{ 'committee.label.title' | translate }}"
+    formControlName="titleId"
+    optionValue="id"
+    [options]="titleOptions.data"
+    [loading]="titleOptions.loading"
+  ></m-select>
+
+  <m-datepicker
+    class="block"
+    label="{{ 'committee.label.startDate' | translate }}"
+    formControlName="startDate"
+  ></m-datepicker>
+  <m-datepicker
+    class="block"
+    label="{{ 'committee.label.endDate' | translate }}"
+    formControlName="endDate"
+  ></m-datepicker>
+  <div>
+    <div class="block font-semibold">
+      <span>{{ 'committee.label.description' | translate}}</span>
+    </div>
+    <textarea class="w-full" rows="10" pTextarea formControlName="biography"></textarea>
+  </div>
+</div>

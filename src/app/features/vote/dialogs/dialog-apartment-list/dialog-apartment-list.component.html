@@ -1,0 +1,172 @@
+<p-dialog
+  (visibleChange)="toggleVisible($event)"
+  [(visible)]="visible"
+  (onShow)="initPopup()"
+  appendTo="body"
+  [modal]="true"
+  [style]="{ width: '80vw' }"
+  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+>
+  <ng-template pTemplate="header">
+    <div class="text-primary-800 font-semibold text-xl">
+      {{ 'votingEvent.subTitle.apartmentList' | translate }}
+    </div>
+  </ng-template>
+  <ng-template pTemplate="content">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4" [formGroup]="form">
+      <div class="flex flex-col">
+        <m-text
+          type="text"
+          formControlName="apartmentCode"
+          label="{{ 'apartment.label.code' | translate }}"
+        ></m-text>
+      </div>
+      <div class="flex flex-col">
+        <m-text
+          type="text"
+          formControlName="apartmentNumber"
+          label="{{ 'apartment.label.name' | translate }}"
+        ></m-text>
+      </div>
+      <div class="flex flex-col">
+        <m-select
+          class="block"
+          label="{{ 'apartment.label.status' | translate }}"
+          formControlName="status"
+          [options]="statusOptions.data"
+          [loading]="statusOptions.loading"
+        ></m-select>
+      </div>
+    </div>
+
+    <div class="flex justify-start mt-2 gap-2">
+      <p-button
+        (click)="search()"
+        (keydown.enter)="search()"
+        [disabled]="dataTable.loading"
+        variant="outlined"
+        severity="primary"
+        label="{{ 'button.search' | translate }}"
+        iconPos="right"
+        icon="text-xl pi pi-search"
+      ></p-button>
+      <p-button (click)="reloadData()" variant="outlined" icon="pi pi-refresh"></p-button>
+    </div>
+
+    <div class="flex-1 overflow-hidden mt-2">
+      <p-table
+        scrollHeight="flex"
+        [(selection)]="selectedItem"
+        dataKey="apartmentCode"
+        [value]="dataTable.content"
+        [scrollable]="true"
+      >
+        <ng-template #header>
+          <tr>
+            <th></th>
+            <th>{{ 'apartment.label.code' | translate }}</th>
+            <th>{{ 'apartment.label.name' | translate }}</th>
+            <th>{{ 'apartment.label.status' | translate }}</th>
+            <th>{{ 'apartment.label.floor' | translate }}</th>
+            <th>{{ 'apartment.label.building' | translate }}</th>
+            <th>{{ 'apartment.label.area' | translate }}</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-item>
+          @if (!dataTable.loading) {
+            <tr [pContextMenuRow]="item" [pSelectableRow]="item" [ngClass]="{'disabled-row': item.disabled}">
+              <td>
+                <p-tableRadioButton [disabled]="item.disabled" [value]="item" />
+              </td>
+              <td>{{ item.apartmentCode }}</td>
+              <td>{{ item.apartmentNumber }}</td>
+              <td>
+                <div class="flex items-center gap-2">
+                  @switch (item.status) {
+                    @case ('FOR_SALE') {
+                      <i class="pi icon-apartment-for-sale-thirdary-xl"></i>
+                    }
+                    @case ('FOR_RENT') {
+                      <i class="pi icon-apartment-for-rent-secondary-xl"></i>
+                    }
+                    @case ('OCCUPIED') {
+                      <i class="pi icon-apartment-occupied-success-xl"></i>
+                    }
+                    @case ('VACANT') {
+                      <i class="pi icon-apartment-vacant-default-xl"></i>
+                    }
+                  }
+                  <span>{{ item.status | getLabel: { options: statusOptions.data } }}</span>
+                </div>
+              </td>
+              <td>{{ item?.floor }}</td>
+              <td>{{ item?.buildingBlock }}</td>
+              <td>{{ item?.area }}</td>
+            </tr>
+          } @else {
+            <tr>
+              <td>
+                <p-skeleton />
+              </td>
+              <td>
+                <p-skeleton />
+              </td>
+              <td>
+                <p-skeleton />
+              </td>
+              <td>
+                <p-skeleton />
+              </td>
+              <td>
+                <p-skeleton />
+              </td>
+              <td>
+                <p-skeleton />
+              </td>
+              <td>
+                <p-skeleton />
+              </td>
+            </tr>
+          }
+        </ng-template>
+      </p-table>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="flex items-center" style="flex-direction: column;">
+        <div class="w-full flex justify-end">
+          <p-paginator
+            styleClass="!justify-end"
+            (onPageChange)="onPageChange($event)"
+            [first]="dataTable.first"
+            [rows]="dataTable.size"
+            [totalRecords]="dataTable.totalElements"
+            [rowsPerPageOptions]="[10, 20, 30]"
+          />
+        </div>
+        <div class="w-full flex justify-end">
+          <p-button
+            severity="info"
+            variant="outlined"
+            styleClass="btn-cancel"
+            icon="pi pi-times"
+            iconPos="right"
+            (click)="cancel()"
+            (keydown.enter)="cancel()"
+            label="{{ 'button.cancel' | translate }}"
+          ></p-button>
+          <p-button
+            class="ml-2"
+            variant="outlined"
+            [disabled]="dataTable.loading || !selectedItem?.apartmentCode"
+            icon="pi pi-check"
+            iconPos="right"
+            (click)="save()"
+            (keydown.enter)="save()"
+            label="{{ 'button.confirm' | translate }}"
+          ></p-button>
+        </div>
+    </div>
+  </ng-template>
+</p-dialog>

@@ -1,0 +1,25 @@
+@use "mixins" as *;
+
+.layout-wrapper {
+  background-color: var(--ground-background);
+  margin-left: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.layout-content {
+  padding: 1.75rem;
+  flex: 1;
+  overflow: hidden;
+}
+
+.card {
+  background: var(--card-background);
+  padding: 1rem;
+  border-radius: 10px;
+  //margin-bottom: 1rem;
+  box-shadow: var(--card-shadow);
+}
+
+@include generate-widths();

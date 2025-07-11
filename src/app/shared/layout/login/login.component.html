@@ -1,0 +1,29 @@
+<div class="page-login">
+  <div class="login-container">
+    <div class="content">
+      <form (ngSubmit)="onSubmit()" class="flex flex-col gap-6">
+        <div>
+          <h2 class="m-0">Chào mừng</h2>
+          <p class="m-0">Đăng nhập</p>
+        </div>
+        <div>
+          <m-text label="Tên đăng nhập" [(ngModel)]="username" name="username"></m-text>
+        </div>
+        <div>
+          <m-text label="Mật khẩu" [(ngModel)]="password" name="password" type="password"></m-text>
+        </div>
+        <p-button styleClass="w-full" type="submit">Đăng nhập</p-button>
+        <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+      </form>
+    </div>
+  </div>
+  <div class="block-logo">
+    <img src="assets/images/logo-uplife.png" alt="logo uplife" width="330px"/>
+  </div>
+  <div class="block-slogan">
+    <h2>Nâng tầm cuộc sống</h2>
+    <p>Chúng tôi không chỉ giúp Ban quản lý làm việc hiệu quả hơn, mà còn giúp cư dân tiết kiệm thời gian, dễ dàng kiểm
+      soát cuộc sống của mình, từ những điều nhỏ nhất.</p>
+  </div>
+</div>
+

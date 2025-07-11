@@ -1,0 +1,120 @@
+@mixin base-icon($size: 1rem) {
+  width: $size;
+  height: $size;
+  cursor: pointer;
+  display: inline-block;
+  background-color: transparent;
+  mask-size: contain !important;
+  mask-repeat: no-repeat !important;
+  mask-position: center center !important;
+  -webkit-mask-size: contain !important;
+  -webkit-mask-repeat: no-repeat !important;
+  -webkit-mask-position: center center !important;
+}
+
+$icons: (
+  menu-building: '/assets/icons/menu-building.svg',
+  menu-investor: '/assets/icons/menu-investor.svg',
+  menu-apartment: '/assets/icons/menu-apartment.svg',
+  menu-building-management: '/assets/icons/menu-building-management.svg',
+  menu-complaint: '/assets/icons/menu-complaint.svg',
+  menu-employee: '/assets/icons/menu-employee.svg',
+  menu-management-board: '/assets/icons/menu-management-board.svg',
+  menu-notifications: '/assets/icons/menu-notification.svg',
+  menu-services: '/assets/icons/menu-services.svg',
+  menu-vehicle: '/assets/icons/menu-vehicle.svg',
+  menu-resident: '/assets/icons/menu-resident.svg',
+  menu-policyRule: '/assets/icons/menu-policyRule.svg',
+  chart: '/assets/icons/Charts.svg',
+  status-new: '/assets/icons/status-new.svg',
+  status-inprogress: '/assets/icons/status-inprogress.svg',
+  time-pause: '/assets/icons/time-pause.svg',
+  time-warning: '/assets/icons/time-warning.svg',
+  time-processing: '/assets/icons/time-processing.svg',
+  time-pending: '/assets/icons/time-pending.svg',
+  car: '/assets/icons/car.svg',
+  bike: '/assets/icons/bike.svg',
+  parking: '/assets/icons/parking.svg',
+  male: '/assets/icons/male.svg',
+  female: '/assets/icons/female.svg',
+  home-owner: '/assets/icons/home-owner.svg',
+  apartment-vacant: '/assets/icons/apartment-vacant.svg',
+  apartment-occupied: '/assets/icons/apartment-occupied.svg',
+  apartment-for-sale: '/assets/icons/apartment-for-sale.svg',
+  apartment-for-rent: '/assets/icons/apartment-for-rent.svg',
+  send-invoice: '/assets/icons/send-invoice.svg',
+  summary-invoice: '/assets/icons/summary-invoice.svg',
+  export-invoice: '/assets/icons/export-invoice.svg',
+  draft: '/assets/icons/draft.svg',
+  document: '/assets/icons/document.svg',
+  pending-payment: '/assets/icons/pending-payment.svg',
+  recorded-status: '/assets/icons/recorded-status.svg',
+  send-record: '/assets/icons/send-record.svg',
+  cash: '/assets/icons/icon-cash.svg',
+  electricity: '/assets/icons/icon-electricity.svg',
+  water: '/assets/icons/icon-water.svg',
+  service: '/assets/icons/icon-service.svg',
+  other-service: '/assets/icons/icon-other-service.svg',
+  vehicle: '/assets/icons/icon-car.svg',
+  bill-cancel: '/assets/icons/bill-cancel.svg',
+  import: '/assets/icons/icon-import.svg',
+  download-document: '/assets/icons/icon-download-document.svg',
+  motorbike: '/assets/icons/motorbike.svg',
+  other: '/assets/icons/other.svg',
+);
+
+$colors: (
+  primary: var(--p-primary-500),
+  secondary: var(--p-secondary-500),
+  thirdary: var(--p-thirdary-500),
+  success: var(--p-success-500),
+  warning: var(--p-warning-500),
+  danger: var(--p-danger-500),
+  default: var(--p-default-500),
+  secondary-light: #29A19C,
+  thirdary-light: #D9602B,
+  primary-light: #2A1F9C,
+  default-light: #606068
+);
+
+$font-sizes: (
+  'xs': 0.75rem,
+  'sm': 0.875rem,
+  'base': 1rem,
+  'lg': 1.125rem,
+  'xl': 1.25rem,
+  '2xl': 1.5rem,
+  '3xl': 1.875rem,
+  '4xl': 2.25rem,
+  '5xl': 3rem,
+  '6xl': 4rem
+);
+
+// Nếu có size
+@each $iconName, $iconPath in $icons {
+  @each $colorName, $colorValue in $colors {
+    @each $sizeName, $sizeValue in $font-sizes {
+      .icon-#{$iconName}-#{$colorName}-#{$sizeName} {
+        @include base-icon($sizeValue);
+        mask: url(#{$iconPath});
+        background-color: $colorValue;
+      }
+    }
+  }
+}
+
+// Nếu không có size → mặc định
+@each $iconName, $iconPath in $icons {
+  .icon-#{$iconName} {
+    @include base-icon(); // dùng size mặc định 1rem
+    mask: url(#{$iconPath});
+    background-color: var(--text-color);
+  }
+  @each $colorName, $colorValue in $colors {
+    .icon-#{$iconName}-#{$colorName} {
+      @include base-icon(); // dùng size mặc định 1rem
+      mask: url(#{$iconPath});
+      background-color: $colorValue;
+    }
+  }
+}

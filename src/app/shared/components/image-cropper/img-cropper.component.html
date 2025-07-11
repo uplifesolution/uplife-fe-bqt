@@ -1,0 +1,45 @@
+<div class="thumbnail-wrapper rounded-xl" [ngStyle]="{ 'width': imgWidth, 'height': imgHeight}">
+  <img [ngStyle]="{ 'object-fit': 'contain'}" [src]="imageUrl" alt="Avatar" class="avatar h-full" width="100%"/>
+  <div [hidden]="showChangeImage" class="action-btn">
+    <p-button
+      severity="secondary"
+      [raised]="true"
+      label="{{ 'button.uploadImage' | translate }}"
+      iconPos="right"
+      icon="pi pi-upload"
+      (click)="triggerFileInput(fileInput)"
+    ></p-button>
+  </div>
+  <input type="file" accept="image/*" hidden #fileInput (change)="openCropper($event)"/>
+</div>
+
+<p-dialog [(visible)]="showCropper" [modal]="true" [style]="{ width: '35rem' }" header="Chỉnh sửa ảnh">
+  <div class="flex flex-col items-center">
+    <image-cropper
+      [imageChangedEvent]="imageChangedEvent"
+      [maintainAspectRatio]="true"
+      [aspectRatio]="1"
+      [resizeToWidth]="resizeToWidth"
+      [cropperStaticWidth]="cropperStaticWidth"
+      [cropperStaticHeight]="cropperStaticHeight"
+      [cropperMinWidth]="cropperMinWidth"
+      [cropperMinHeight]="cropperMinHeight"
+      [cropperMaxWidth]="cropperMaxWidth"
+      [cropperMaxHeight]="cropperMaxHeight"
+      [(transform)]="transform"
+      format="png"
+      output="blob"
+      (imageCropped)="imageCropped($event)"
+    ></image-cropper>
+    <div class="flex gap-2 mt-4">
+      <p-button severity="secondary" variant="outlined" icon="pi pi-search-plus" (click)="zoomIn()"></p-button>
+      <p-button severity="secondary" variant="outlined" icon="pi pi-search-minus" (click)="zoomOut()"></p-button>
+      <p-button severity="secondary" variant="outlined" icon="pi pi-refresh" (click)="reset()"></p-button>
+    </div>
+  </div>
+  <ng-template #footer>
+    <p-button severity="info" label="{{ 'button.cancel' | translate }}" class="p-button-text"
+              (click)="onCancel()"></p-button>
+    <p-button label="{{ 'button.save' | translate }}" [disabled]="!croppedImage" (click)="onSave()"></p-button>
+  </ng-template>
+</p-dialog>
