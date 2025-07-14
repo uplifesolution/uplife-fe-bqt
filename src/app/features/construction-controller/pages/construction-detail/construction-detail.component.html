@@ -1,0 +1,128 @@
+<div class="grid grid-cols-3 gap-4 h-full">
+  <div class="col-span-2 card overflow-auto">
+    <div class="section">
+      <div class="section-title">
+        <div class="title">{{ 'apartment.subTitle.info' | translate }}</div>
+        <div>
+          <p-button
+            severity="primary"
+            variant="outlined"
+            label="{{ 'button.update' | translate }}"
+            iconPos="right"
+            icon="pi pi-pen-to-square"
+            (click)="openFormEdit()"
+            (keydown.enter)="openFormEdit()"
+            *ngIf="canAccess(Constants.Action_Update)"
+          ></p-button>
+        </div>
+      </div>
+      <div class="section-content">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'apartment.label.code' | translate }}:</div>
+            <div class="text-value">{{ data?.apartmentDTO?.apartmentCode }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'apartment.label.name' | translate }}:</div>
+            <div class="text-value">{{ data?.apartmentDTO?.apartmentNumber }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'apartment.label.status' | translate }}:</div>
+            <div class="text-value">{{ data?.apartmentDTO?.statusLabel }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'apartment.label.building' | translate }}:</div>
+            <div class="text-value">{{ data?.apartmentDTO?.buildingBlock }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'apartment.label.floor' | translate }}:</div>
+            <div class="text-value">{{ data?.apartmentDTO?.floor }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'apartment.label.area' | translate }}:</div>
+            <div class="text-value">{{ data?.apartmentDTO?.area }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'apartment.label.ownerName' | translate }}:</div>
+            <div class="text-value">{{ data?.apartmentDTO?.ownerDTO?.fullName }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'apartment.label.ownerPhone' | translate }}:</div>
+            <div class="text-value">
+              <a
+                class="text-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                [href]="'https://zalo.me/' + data?.apartmentDTO?.ownerDTO?.phoneNumber">{{ data?.apartmentDTO?.ownerDTO?.phoneNumber }}
+              </a>
+            </div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'apartment.label.descriptionType' | translate }}:</div>
+            <div class="text-value">{{ data?.apartmentDTO?.type }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">
+        <div class="title">{{ 'construction.subTitle.constructionInfo' | translate }}</div>
+      </div>
+      <div class="section-content">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'construction.label.startDate' | translate }}:</div>
+            <div class="text-value">{{ data?.startDate | date: 'dd/MM/YYYY' }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'construction.label.endDate' | translate }}:</div>
+            <div class="text-value">{{ data?.endDate | date: 'dd/MM/YYYY' }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'construction.label.status' | translate }}:</div>
+            <div class="text-value">{{ data?.status | getLabel: {options: listStatus.data} }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'construction.label.noiseLevel' | translate }}:</div>
+            <div class="text-value">{{ data?.noiseLevel | getLabel: {options: listPriorityLevel.data} }}</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 my-4">
+          <div class="text-label">{{ 'construction.label.workDescription' | translate }}</div>
+          <div class="text-value">{{ data?.workDescription }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <ecm-folder [uuidEcmFolder]="data?.apartmentDTO?.uuidEcmFolder!"></ecm-folder>
+  </div>
+</div>
+
+<p-drawer
+  [(visible)]="visibleEdit"
+  header="{{ 'construction.subTitle.update' | translate }}"
+  styleClass="w-34-5-rem"
+  position="right"
+>
+  <construction-create #formEdit [listPriorityLevel]="listPriorityLevel"
+                       (changeData)="onChangeData($event)"></construction-create>
+  <ng-template #footer>
+    <p-button
+      severity="info"
+      variant="outlined"
+      label="{{ 'button.cancel' | translate }}"
+      icon="text-xl pi pi-times"
+      iconPos="right"
+      (click)="visibleEdit = false"
+      (keydown.enter)="visibleEdit = false"
+    ></p-button>
+    <p-button
+      variant="outlined"
+      label="{{ 'button.save' | translate }}"
+      icon="text-xl pi pi-check"
+      iconPos="right"
+      (click)="formEdit.onSave()"
+      (keydown.enter)="formEdit.onSave()"
+    ></p-button>
+  </ng-template>
+</p-drawer>

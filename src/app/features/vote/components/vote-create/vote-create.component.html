@@ -1,0 +1,126 @@
+<div class="mb-6 font-semibold text-primary">
+  {{ 'votingEvent.subTitle.votingEventInfo' | translate }}
+</div>
+<div [formGroup]="form" class="flex flex-col gap-6">
+  <m-text class="block" label="{{ 'votingEvent.label.name' | translate }}" formControlName="name"></m-text>
+  <m-select
+    class="block"
+    label="{{ 'votingEvent.label.type' | translate }}"
+    formControlName="type"
+    [options]="listVotingType.data"
+    [loading]="listVotingType.loading"
+  ></m-select>
+  <m-datepicker
+    class="block"
+    label="{{ 'votingEvent.label.startDate' | translate }}"
+    formControlName="startDate"
+  ></m-datepicker>
+  <m-datepicker
+    class="block"
+    label="{{ 'votingEvent.label.endDate' | translate }}"
+    formControlName="endDate"
+  ></m-datepicker>
+  <div>
+    <div class="block font-semibold mb-2">
+      <span>{{ 'votingEvent.label.content' | translate}}</span>
+    </div>
+    <textarea class="w-full" rows="5" pTextarea formControlName="content"></textarea>
+  </div>
+  <div>
+    <div class="block font-semibold mb-2">
+      <span>{{ 'votingEvent.label.description' | translate}}</span>
+    </div>
+    <textarea class="w-full" rows="5" pTextarea formControlName="description"></textarea>
+  </div>
+  <m-text
+    class="block"
+    label="{{ 'votingEvent.label.googleForm' | translate}}"
+    formControlName="googleFormLink"
+  ></m-text>
+  <m-text
+    class="block"
+    label="{{ 'votingEvent.label.maxVotePerApartment' | translate}}"
+    formControlName="maxVotePerApartment"
+  ></m-text>
+  <m-text
+    class="block"
+    label="{{ 'votingEvent.label.numberOfWinners' | translate}}"
+    formControlName="numberOfWinners"
+  ></m-text>
+
+  <div class="flex justify-between items-center">
+    <div class="font-semibold text-primary">
+      {{ 'votingEvent.subTitle.votingInfo' | translate }}
+    </div>
+    <p-button
+      class="ml-2"
+      *ngIf="!form.controls['isAllApartment'].value"
+      variant="outlined" severity="secondary"
+      label="{{ 'button.addApartment' | translate }}" iconPos="right"
+      icon="pi pi-plus"
+      (click)="createQuotaItem()"
+    ></p-button>
+  </div>
+  <div>{{ 'votingEvent.subTitle.votingType' | translate }}</div>
+  <div class="flex gap-4">
+    <div class="field-checkbox">
+      <p-radiobutton inputId="uplife" [value]="false" formControlName="isAllApartment"/>
+      <label for="uplife" class="ml-2">{{ 'votingEvent.label.personal' | translate }}</label>
+    </div>
+    <div class="field-checkbox">
+      <p-radiobutton inputId="google" [value]="true" formControlName="isAllApartment"/>
+      <label for="google" class="ml-2">{{ 'votingEvent.label.building' | translate }}</label>
+    </div>
+  </div>
+  <div class="col-12">
+    @if (!form.controls['isAllApartment'].value) {
+      <div>
+        <p-table #dv [value]="listApartments">
+          <ng-template #header>
+            <tr>
+              <th style="width: 5rem">STT</th>
+              <th>{{ 'votingEvent.label.apartment' | translate }}</th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-item let-i="rowIndex">
+            @if (!loading) {
+              <tr [formGroup]="formArray.at(i)">
+                <td>
+                  <a (click)="removeQuotaItem(i)">
+                    <span class="pi pi-trash text-danger"></span>
+                  </a>
+                </td>
+                <td>
+                  <m-text
+                    class="block"
+                    [showLabel]="false"
+                    formControlName="apartmentCode"
+                    rightIcon="pi pi-search"
+                    (click)="openApartmentList(i)"
+                  ></m-text>
+                </td>
+              </tr>
+            } @else {
+              <tr>
+                <td>
+                  <p-skeleton/>
+                </td>
+                <td>
+                  <p-skeleton/>
+                </td>
+              </tr>
+            }
+
+          </ng-template>
+        </p-table>
+      </div>
+    }
+  </div>
+</div>
+
+<app-dialog-apartment-list
+  [visible]="visibleCreateApartment"
+  (togglePopup)="togglePopupCreate($event)"
+  [listApartmentForm]="getDataFormArray"
+  [selectedApartment]="selectedApartment"
+></app-dialog-apartment-list>

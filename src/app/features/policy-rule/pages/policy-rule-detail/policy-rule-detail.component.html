@@ -1,0 +1,202 @@
+<div class="grid grid-cols-3 gap-4 h-full">
+  <div class="col-span-2 card overflow-auto">
+    <div class="section">
+      <div class="section-title">
+        <div class="title">{{ 'policyRule.subTitle.info' | translate }}</div>
+        <div class="flex gap-4">
+          <ng-container *ngIf="data?.statusDTO?.code === 'DRAFT'">
+            <p-button
+              severity="success"
+              variant="outlined"
+              label="{{ 'button.approve' | translate }}"
+              iconPos="right"
+              icon="pi pi-file-check"
+              (click)="approve()"
+              (keydown.enter)="approve()"
+              *ngIf="canAccess(Constants.Action_Approve)"
+            ></p-button>
+            <p-button
+              severity="danger"
+              variant="outlined"
+              label="{{ 'button.refuse' | translate }}"
+              iconPos="right"
+              icon="pi pi-file-excel"
+              (click)="reject()"
+              (keydown.enter)="reject()"
+              *ngIf="canAccess(Constants.Action_Reject)"
+            ></p-button>
+            <p-button
+              severity="primary"
+              variant="outlined"
+              label="{{ 'button.update' | translate }}"
+              iconPos="right"
+              icon="pi pi-pen-to-square"
+              (click)="openFormEdit()"
+              (keydown.enter)="openFormEdit()"
+              *ngIf="canAccess(Constants.Action_Update)"
+            ></p-button>
+          </ng-container>
+        </div>
+      </div>
+      <div class="section-content">
+        <div class="grid grid-cols-1 mb-4">
+          <div class="text-label">{{ 'policyRule.label.title' | translate }}</div>
+          <div class="text-value">{{ data?.title }}</div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'policyRule.label.type' | translate }}</div>
+            <div class="text-value">{{ data?.typeDTO?.name }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'policyRule.label.status' | translate }}</div>
+            <div class="text-value">{{ data?.statusDTO?.name }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'policyRule.label.effectiveDate' | translate }}</div>
+            <div class="text-value">{{ data?.effectiveDate | date: 'dd/MM/YYYY' }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'policyRule.label.expiredDate' | translate }}</div>
+            <div class="text-value">{{ data?.expiredDate | date: 'dd/MM/YYYY' }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'policyRule.label.version' | translate }}</div>
+            <div class="text-value">{{ data?.version }}</div>
+          </div>
+        </div>
+      </div>
+      <ng-container *ngIf="data?.statusDTO?.code !== 'DRAFT'">
+        <div class="section-title">
+          <div class="title">{{ 'policyRule.subTitle.approvalInfo' | translate }}</div>
+        </div>
+        <div class="section-content">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="flex flex-col">
+              <div class="text-label">{{ 'policyRule.label.approvalName' | translate }}</div>
+              <div class="text-value">{{ data?.statusDTO?.code === 'APPROVED' ? data?.approvedBy : data?.rejectBy }}</div>
+            </div>
+            <div class="flex flex-col">
+              <div class="text-label">{{ 'policyRule.label.confirmRequire' | translate }}</div>
+              <div class="text-value">
+                @switch (data?.ackRequired) {
+                  @case (true) {
+                    {{ 'policyRule.label.yes' | translate }}
+                  }
+                  @case (false) {
+                    {{ 'policyRule.label.no' | translate }}
+                  }
+                }
+              </div>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 my-4">
+            <div class="text-label">{{ 'policyRule.label.note' | translate }}</div>
+            <div class="text-value">{{ data?.reason }}</div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <div class="card">
+    <ecm-folder [uuidEcmFolder]="data?.uuidEcmFolder!"></ecm-folder>
+  </div>
+</div>
+
+<p-drawer
+  [(visible)]="visibleEdit"
+  header="{{ 'policyRule.subTitle.update' | translate }}"
+  styleClass="w-34-5-rem"
+  position="right"
+>
+  <policy-rule-form
+    #formEdit
+    [listPolicyRuleType]="listPolicyRuleType"
+    (changeData)="onChangeData($event)"
+  ></policy-rule-form>
+  <ng-template #footer>
+    <p-button
+      severity="info"
+      variant="outlined"
+      label="{{ 'button.cancel' | translate }}"
+      icon="text-xl pi pi-times"
+      iconPos="right"
+      (click)="visibleEdit = false"
+      (keydown.enter)="visibleEdit = false"
+    ></p-button>
+    <p-button
+      variant="outlined"
+      label="{{ 'button.save' | translate }}"
+      icon="text-xl pi pi-check"
+      iconPos="right"
+      (click)="formEdit.onSave()"
+      (keydown.enter)="formEdit.onSave()"
+    ></p-button>
+  </ng-template>
+</p-drawer>
+
+<p-drawer
+  [(visible)]="visibleDrawerApprove"
+  header="{{ 'policyRule.subTitle.approve' | translate }}"
+  styleClass="w-34-5-rem"
+  position="right"
+>
+  <policy-rule-approve
+    #formApprove
+    [type]="'approve'"
+    (changeData)="onChangeData($event)"
+  ></policy-rule-approve>
+  <ng-template #footer>
+    <p-button
+      severity="info"
+      variant="outlined"
+      label="{{ 'button.cancel' | translate }}"
+      icon="text-xl pi pi-times"
+      iconPos="right"
+      (click)="visibleDrawerApprove = false"
+      (keydown.enter)="visibleDrawerApprove = false"
+    ></p-button>
+    <p-button
+      variant="outlined"
+      severity="success"
+      label="{{ 'button.approve' | translate }}"
+      icon="pi pi-file-check"
+      iconPos="right"
+      (click)="formApprove.onSave()"
+      (keydown.enter)="formApprove.onSave()"
+    ></p-button>
+  </ng-template>
+</p-drawer>
+
+<p-drawer
+  [(visible)]="visibleDrawerReject"
+  header="{{ 'policyRule.subTitle.reject' | translate }}"
+  styleClass="w-34-5-rem"
+  position="right"
+>
+  <policy-rule-approve
+    #formReject
+    [type]="'reject'"
+    (changeData)="onChangeData($event)"
+  ></policy-rule-approve>
+  <ng-template #footer>
+    <p-button
+      severity="info"
+      variant="outlined"
+      label="{{ 'button.cancel' | translate }}"
+      icon="text-xl pi pi-times"
+      iconPos="right"
+      (click)="visibleDrawerReject = false"
+      (keydown.enter)="visibleDrawerReject = false"
+    ></p-button>
+    <p-button
+      variant="outlined"
+      severity="danger"
+      label="{{ 'button.refuse' | translate }}"
+      icon="pi pi-file-excel"
+      iconPos="right"
+      (click)="formReject.onSave()"
+      (keydown.enter)="formReject.onSave()"
+    ></p-button>
+  </ng-template>
+</p-drawer>

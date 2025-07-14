@@ -1,0 +1,21 @@
+.thumbnail-wrapper {
+  position: relative;
+  overflow: hidden;
+
+  .action-btn {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    visibility: hidden;
+  }
+
+  &:hover .action-btn {
+    opacity: 1;
+    visibility: visible;
+  }
+}

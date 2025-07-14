@@ -1,0 +1,96 @@
+<div class="mb-6 font-semibold text-primary">
+  {{ 'policyRule.subTitle.info' | translate }}
+</div>
+<div [formGroup]="form">
+  <div  class="flex flex-col">
+    <m-text
+      class="mb-6 block"
+      label="{{ 'policyRule.label.title' | translate }}"
+      formControlName="title"
+    ></m-text>
+    <m-select
+      class="mb-6 block"
+      label="{{ 'policyRule.label.type' | translate }}"
+      formControlName="type"
+      [options]="listPolicyRuleType.data"
+      [loading]="listPolicyRuleType.loading"
+    ></m-select>
+    <m-datepicker
+      class="mb-6 block"
+      label="{{ 'policyRule.label.effectiveDate' | translate }}"
+      formControlName="effectiveDate"
+    ></m-datepicker>
+    <m-datepicker
+      class="mb-6 block"
+      label="{{ 'policyRule.label.expiredDate' | translate }}"
+      formControlName="expiredDate"
+    ></m-datepicker>
+    <div>
+      <div class="mb-2">{{ 'policyRule.label.ackRequired' | translate }}</div>
+      <div class="flex gap-4">
+        <div class="field-checkbox">
+          <p-radiobutton inputId="yes" [value]="true" formControlName="ackRequired"/>
+          <label for="yes" class="ml-2">{{ 'policyRule.label.yes' | translate }}</label>
+        </div>
+        <div class="field-checkbox">
+          <p-radiobutton inputId="no" [value]="false" formControlName="ackRequired"/>
+          <label for="no" class="ml-2">{{ 'policyRule.label.no' | translate }}</label>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="block font-semibold mb-2 mt-6">
+        <span>{{ 'policyRule.label.note' | translate}}</span>
+      </div>
+      <textarea class="w-full" rows="10" pTextarea formControlName="note"></textarea>
+    </div>
+  </div>
+
+  <div class="my-6 font-semibold text-primary">
+  {{ 'policyRule.subTitle.function' | translate }}
+  </div>
+
+  <div class="flex-1 overflow-hidden">
+    <p-table
+      scrollHeight="flex"
+      [value]="dataTable.content"
+      [scrollable]="true"
+      [paginator]="false"
+      [(selection)]="selectedItems"
+    >
+      <ng-template #header>
+        <tr>
+          <th></th>
+          <th>{{ 'policyRule.label.functionName' | translate }}</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-item>
+        @if (!dataTable.loading) {
+          <tr>
+            <td class="text-center">
+              <p-tableCheckbox [value]="item"></p-tableCheckbox>
+            </td>
+            <td>{{ item.name }}</td>
+          </tr>
+        } @else {
+          <tr>
+            <td>
+              <p-skeleton />
+            </td>
+            <td>
+              <p-skeleton />
+            </td>
+          </tr>
+        }
+      </ng-template>
+    </p-table>
+  </div>
+
+  <p-paginator
+    styleClass="!justify-end"
+    (onPageChange)="onPageChange($event)"
+    [first]="dataTable.first"
+    [rows]="dataTable.size"
+    [totalRecords]="data.length"
+    [rowsPerPageOptions]="[10, 20, 30]"
+  />

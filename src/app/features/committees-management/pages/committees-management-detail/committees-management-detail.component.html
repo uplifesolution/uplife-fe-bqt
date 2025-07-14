@@ -1,0 +1,97 @@
+<div class="grid grid-cols-3 gap-4 h-full">
+  <div class="col-span-2 card overflow-auto">
+    <div class="section">
+      <div class="section-title">
+        <div class="title">{{ 'breadcrumb.committeeDetail' | translate }}</div>
+        <div>
+          <p-button severity="primary"
+                    variant="outlined"
+                    label="{{ 'button.update' | translate }}"
+                    iconPos="right"
+                    icon="pi pi-pen-to-square"
+                    (onClick)="openFormEdit()"
+                    *ngIf="canAccess(Constants.Action_Update) || true"
+          ></p-button>
+        </div>
+      </div>
+      <div class="section-content">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'committee.label.name' | translate }}</div>
+            <div class="text-value">{{ data?.fullName }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'committee.label.phone' | translate }}</div>
+            <div class="text-value">
+              <a
+                class="text-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                [href]="'https://zalo.me/' + data?.phone">{{ data?.phone }}
+              </a>
+            </div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'committee.label.title' | translate }}</div>
+            <div class="text-value">{{ data?.titleDTO?.name }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'committee.label.status' | translate }}</div>
+            <div class="text-value">{{ data?.activeName }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'committee.label.startDate' | translate }}</div>
+            <div class="text-value">{{ data?.startDate | date: 'dd/MM/YYYY' }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'committee.label.endDate' | translate }}</div>
+            <div class="text-value">{{ data?.endDate | date: 'dd/MM/YYYY' }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'committee.label.isPrimaryRepresentative' | translate }}</div>
+            <div class="text-value" *ngIf="data?.isPrimaryRepresentative !== undefined">
+              {{ (data?.isPrimaryRepresentative ? 'committee.label.yes' : 'committee.label.no') | translate }}
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 my-4">
+          <div class="text-label">{{ 'committee.label.description' | translate }}</div>
+          <div class="text-value">{{ data?.biography }}</div>
+        </div>
+        <div class="section-title mb-4">
+          <div class="title">{{ 'committee.label.apartmentInfo' | translate }}</div>
+        </div>
+        <div class="section-content">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="flex flex-col">
+              <div class="text-label">{{ 'committee.label.apartmentNo' | translate }}</div>
+              <div class="text-value">
+                <a class="text-link" [routerLink]="['/apartment', data?.apartmentDTO?.uuid]">
+                  {{ data?.apartmentDTO?.apartmentNumber }}</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <ecm-folder [uuidEcmFolder]="data?.uuidEcmFolder!"></ecm-folder>
+  </div>
+</div>
+
+
+<p-drawer [(visible)]="visibleEdit" header="{{ 'committee.subTitle.updateCommittee' | translate }}"
+          styleClass="w-34-5-rem"
+          position="right">
+  <committee-create #formEdit (changeData)="onChangeData($event)"></committee-create>
+  <ng-template #footer>
+    <p-button severity="info" variant="outlined" label="{{ 'button.cancel' | translate }}" icon="text-xl pi pi-times"
+              iconPos="right"
+              (onClick)="visibleEdit = false"></p-button>
+    <p-button variant="outlined" label="{{ 'button.save' | translate }}" icon="text-xl pi pi-check" iconPos="right"
+              (onClick)="formEdit.onSave()"></p-button>
+  </ng-template>
+</p-drawer>

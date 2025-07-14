@@ -1,0 +1,35 @@
+@use "sass:math";
+@use "sass:string";
+
+@function replace-dot($string) {
+  $index: string.index($string, '.');
+  @if $index {
+    $string: string.slice($string, 1, $index - 1) + '-' + string.slice($string, $index + 1);
+  }
+  @return $string;
+}
+
+@mixin focus-visible() {
+  &:focus-visible {
+    outline: 1px solid var(--primary-color);
+    outline-offset: var(--p-focus-ring-offset);
+  }
+}
+
+@mixin mobile {
+  @media (max-width: 900px) {
+    @content;
+  }
+}
+
+@mixin generate-widths() {
+  @for $i from 5 through 1000 {
+    $value: math.div($i, 10);
+    $classname: replace-dot("#{$value}");
+
+    .w-#{$classname}-rem {
+      width: #{$value}rem !important;
+    }
+  }
+}
+

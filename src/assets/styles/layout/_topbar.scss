@@ -1,0 +1,84 @@
+@use "mixins" as *;
+
+.layout-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.75rem 0 1.75rem;
+
+  &.layout-topbar-sticky {
+    //border-bottom: 1px solid var(--border-color);
+    background-color: var(--topbar-sticky-background);
+    position: fixed;
+    top: 0;
+    left: var(--sidebar-width);
+    right: 0;
+    z-index: 1;
+    backdrop-filter: blur(8px);
+  }
+
+  .topbar-start {
+
+  }
+
+  .topbar-end {
+    .p-select {
+      color: var(--primary-color);
+      background-color: var(--p-primary-50);
+      font-weight: 500;
+      font-size: 1.25rem;
+      border-radius: var(--p-border-radius-lg);
+      border: 1px solid var(--primary-50);
+
+      .p-select-label {
+        color: var(--primary-color);
+      }
+
+      .p-select-dropdown {
+        color: var(--primary-color);
+      }
+    }
+
+    .menu-button {
+      display: none;
+    }
+
+    .topbar-items {
+      display: flex;
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      gap: 0.5rem;
+      align-items: center;
+
+      li {
+        position: relative;
+      }
+
+      .topbar-item {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border: 1px solid var(--border-color);
+        width: 2.5rem;
+        height: 2.5rem;
+        transition: outline-color .2s, border-color .2s;
+        border-radius: 6px;
+        margin: 0;
+        padding: 0;
+        outline-color: transparent;
+        background-color: var(--card-background);
+        cursor: pointer;
+        border-color: var(--primary-color);
+
+        @include focus-visible();
+
+        i, span {
+          color: var(--primary-color);
+          font-size: 1.125rem;
+        }
+      }
+    }
+  }
+}

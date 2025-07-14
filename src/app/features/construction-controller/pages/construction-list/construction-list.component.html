@@ -1,0 +1,209 @@
+<div class="card flex flex-col h-full">
+  <div class="page-title">
+    <div class="page-title-left">
+      <span class="text-primary-800 font-semibold text-xl">{{
+          'construction.subTitle.list' | translate
+        }}</span>
+    </div>
+    <div class="page-title-right">
+      <p-button
+      *ngIf="canAccess(Constants.Action_Create)"
+      variant="outlined"
+      severity="secondary"
+      label="{{ 'button.create' | translate }}"
+      iconPos="right"
+      icon="text-xl pi pi-plus"
+      (click)="onCreate(formCreate)"
+      ></p-button>
+      <p-button
+        (click)="visibleDrawerSearch = !visibleDrawerSearch"
+        variant="outlined"
+        severity="primary"
+        label="{{ 'button.search' | translate }}"
+        iconPos="right"
+        icon="text-xl pi pi-search"
+      ></p-button>
+      <p-button (click)="reloadData()" variant="outlined" icon="pi pi-refresh"></p-button>
+    </div>
+  </div>
+  <div class="flex-1 overflow-hidden">
+    <p-table
+      scrollHeight="flex"
+      [value]="dataTable.content"
+      [scrollable]="true"
+      dataKey="code"
+      [(contextMenuSelection)]="selectedItem"
+      [contextMenu]="cm"
+    >
+      <ng-template #header>
+        <tr>
+          <th>{{ 'construction.label.apartmentNo' | translate }}</th>
+          <th>{{ 'construction.label.status' | translate }}</th>
+          <th>{{ 'construction.label.startDate' | translate }}</th>
+          <th>{{ 'construction.label.endDate' | translate }}</th>
+          <th>{{ 'construction.label.approvedBy' | translate }}</th>
+          <th>{{ 'construction.label.approvalDate' | translate }}</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-item>
+        @if (!dataTable.loading) {
+          <tr [pContextMenuRow]="item" (dblclick)="viewDetail(item.id)">
+            <td>{{ item.apartmentCode }}</td>
+            <td>
+              <div class="flex items-center gap-2">
+                @switch (item.status) {
+                  @case ('DRAFT') {
+                    <i class="icon-draft-default-xl"></i>
+                  }
+                  @case ('PENDING') {
+                    <i class="icon-time-pending-warning-xl"></i>
+                  }
+                  @case ('APPROVED') {
+                    <i class="pi pi-check-circle text-secondary"></i>
+                  }
+                  @case ('REJECTED') {
+                    <i class="pi pi-file-excel text-danger"></i>
+                  }
+                }
+                <span>{{ item.status | getLabel: {options: listStatus.data} }}</span>
+              </div>
+            </td>
+            <td>{{ item?.startDate | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ item?.endDate | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ item.approvedBy }}</td>
+            <td>{{ item?.approvalDate | date: 'dd/MM/yyyy HH:mm' }}</td>
+          </tr>
+        } @else {
+          <tr>
+            <td>
+              <p-skeleton/>
+            </td>
+            <td>
+              <p-skeleton/>
+            </td>
+            <td>
+              <p-skeleton/>
+            </td>
+            <td>
+              <p-skeleton/>
+            </td>
+            <td>
+              <p-skeleton/>
+            </td>
+            <td>
+              <p-skeleton/>
+            </td>
+          </tr>
+        }
+      </ng-template>
+    </p-table>
+  </div>
+
+  <p-paginator
+    styleClass="!justify-end"
+    (onPageChange)="onPageChange($event)"
+    [first]="dataTable.first"
+    [rows]="dataTable.size"
+    [totalRecords]="dataTable.totalElements"
+    [rowsPerPageOptions]="[10, 20, 30]"
+  />
+  <p-contextMenu #cm [model]="itemsMenu" appendTo="body">
+    <ng-template #item let-item>
+      <a pRipple class="flex items-center p-contextmenu-item-link">
+        <span [class]="item.icon"></span>
+        <span class="ml-2">{{ item.label | translate }}</span>
+      </a>
+    </ng-template>
+  </p-contextMenu>
+</div>
+
+<p-drawer
+  [(visible)]="visibleDrawerSearch"
+  header="{{ 'construction.subTitle.search' | translate }}"
+  styleClass="w-34-5-rem"
+  position="right"
+>
+  <div [formGroup]="formSearch">
+    <m-text
+      class="mb-6 block"
+      label="{{ 'construction.label.apartmentNo' | translate }}"
+      formControlName="apartmentCode"
+    ></m-text>
+    <m-select
+      class="mb-6 block"
+      label="{{ 'construction.label.status' | translate }}"
+      formControlName="status"
+      [options]="listStatus.data"
+      [loading]="listStatus.loading"
+    ></m-select>
+  </div>
+  <div class="flex justify-end">
+    <p-button
+      [disabled]="dataTable.loading"
+      variant="outlined"
+      label="{{ 'button.search' | translate }}"
+      icon="text-xl pi pi-search"
+      iconPos="right"
+      (click)="search(true)"
+    ></p-button>
+  </div>
+</p-drawer>
+
+<p-drawer
+  [(visible)]="visibleDrawerCreate"
+  header="{{ 'construction.subTitle.create' | translate }}"
+  styleClass="w-34-5-rem"
+  position="right"
+>
+  <construction-create #formCreate [listPriorityLevel]="listPriorityLevel"
+                       (changeData)="onChangeData($event)"></construction-create>
+  <ng-template #footer>
+    <p-button
+      severity="info"
+      variant="outlined"
+      label="{{ 'button.cancel' | translate }}"
+      icon="text-xl pi pi-times"
+      iconPos="right"
+      (click)="visibleDrawerCreate = false"
+      (keydown.enter)="visibleDrawerCreate = false"
+    ></p-button>
+    <p-button
+      [disabled]="formCreate.loading"
+      variant="outlined"
+      label="{{ 'button.save' | translate }}"
+      icon="text-xl pi pi-check"
+      iconPos="right"
+      (click)="formCreate.onSave()"
+      (keydown.enter)="formCreate.onSave()"
+    ></p-button>
+  </ng-template>
+</p-drawer>
+<p-drawer
+  [(visible)]="visibleDrawerEdit"
+  header="{{ 'construction.subTitle.update' | translate }}"
+  styleClass="w-34-5-rem"
+  position="right"
+>
+  <construction-create #formEdit [listPriorityLevel]="listPriorityLevel"
+                       (changeData)="onChangeData($event)"></construction-create>
+  <ng-template #footer>
+    <p-button
+      severity="info"
+      variant="outlined"
+      label="{{ 'button.cancel' | translate }}"
+      icon="text-xl pi pi-times"
+      iconPos="right"
+      (click)="visibleDrawerEdit = false"
+      (keydown.enter)="visibleDrawerEdit = false"
+    ></p-button>
+    <p-button
+      [disabled]="formEdit.loading"
+      variant="outlined"
+      label="{{ 'button.save' | translate }}"
+      icon="text-xl pi pi-check"
+      iconPos="right"
+      (click)="formEdit.onSave()"
+      (keydown.enter)="formEdit.onSave()"
+    ></p-button>
+  </ng-template>
+</p-drawer>

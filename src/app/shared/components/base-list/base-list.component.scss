@@ -1,0 +1,22 @@
+:host ::ng-deep {
+  //.action-buttons-cell {
+  //  button {
+  //    margin: 0 0.15rem;
+  //  }
+  //}
+
+  // Đảm bảo cột frozen có nền để không bị trong suốt khi cuộn
+  .p-datatable-tbody > tr > td.p-frozen-column {
+    background: inherit; // Hoặc màu nền cụ thể của dòng
+  }
+
+  .p-datatable-thead > tr > th.p-frozen-column {
+    background: var(--surface-b); // Hoặc màu nền header của bạn
+  }
+}
+
+// Nếu bạn muốn style cho tooltip hoặc các element khác của PrimeNG
+// :host ::ng-deep .p-tooltip .p-tooltip-text {
+//   background-color: #333;
+//   color: white;
+// }

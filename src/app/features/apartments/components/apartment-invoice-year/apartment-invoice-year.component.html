@@ -1,0 +1,55 @@
+<div class="card h-full overflow-hidden">
+  <div class="section">
+    <div class="section-content">
+       <p-table
+        #table
+        [value]="dataTable.content"
+        [scrollable]="true"
+        scrollHeight="400px"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>STT</th>
+            <th>{{ 'invoices.label.code' | translate }}</th>
+            <th>{{ 'invoices.label.name' | translate }}</th>
+            <th>{{ 'invoices.label.type' | translate }}</th>
+            <th>{{ 'invoices.label.paymentStatus' | translate }}</th>
+            <th>{{ 'invoices.label.createdDate' | translate }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-i="rowIndex">
+          @if (!dataTable.loading) {
+            <tr (dblclick)="viewDetailInvoice(item?.id, item?.type)">
+              <td>{{ i + 1 + dataTable.first }}</td>
+              <td>{{ item.invoiceCode }}</td>
+              <td>{{ item.invoiceName }}</td>
+              <td>{{ item.typeName }}</td>
+              <td>
+                <div class="flex items-center gap-2">
+                  @if (item?.status === 'UNPAID') {
+                    <i class="pi pi-times-circle text-danger text-xl"></i>
+                  } @else {
+                    <i class="pi pi-check-circle text-success text-xl"></i>
+                  }
+                  <span>{{ item?.status | getLabel: {options: optionsPaymentStatus.data} }}</span>
+                </div>
+              </td>
+              <td> {{ item?.issuedDate | date: 'dd/MM/yyyy' }}</td>
+            </tr>
+          } @else {
+            <tr>
+              <td><p-skeleton /></td>
+              <td><p-skeleton /></td>
+              <td><p-skeleton /></td>
+              <td><p-skeleton /></td>
+              <td><p-skeleton /></td>
+              <td><p-skeleton /></td>
+            </tr>
+          }
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+
+

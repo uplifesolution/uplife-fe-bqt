@@ -1,0 +1,30 @@
+<div class="mb-6 font-semibold text-primary">
+  {{ 'policyRule.subTitle.info' | translate }}
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div class="flex flex-col">
+    <div class="text-label">{{ 'policyRule.label.title' | translate }}</div>
+    <div class="text-value">{{ data?.title }}</div>
+  </div>
+  <div class="flex flex-col">
+    <div class="text-label">{{ 'policyRule.label.type' | translate }}</div>
+    <div class="text-value">{{ data?.typeDTO?.name }}</div>
+  </div>
+  <div class="flex flex-col">
+    <div class="text-label">{{ 'policyRule.label.effectiveDate' | translate }}</div>
+    <div class="text-value">{{ data?.effectiveDate | date: 'dd/MM/YYYY' }}</div>
+  </div>
+  <div class="flex flex-col">
+    <div class="text-label">{{ 'policyRule.label.expiredDate' | translate }}</div>
+    <div class="text-value">{{ data?.expiredDate | date: 'dd/MM/YYYY' }}</div>
+  </div>
+</div>
+<div class="my-6 font-semibold text-primary">
+  {{ 'policyRule.subTitle.approveInfo' | translate }}
+</div>
+<div [formGroup]="form">
+  <div class="block font-semibold mb-2 mt-4">
+    <span>{{ (type === 'approve' ? 'policyRule.label.note' : 'policyRule.label.rejectReason') | translate }}</span>
+  </div>
+  <textarea class="w-full" rows="5" pTextarea formControlName="note"></textarea>
+</div>

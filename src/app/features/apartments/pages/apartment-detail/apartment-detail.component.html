@@ -1,0 +1,336 @@
+<div class="grid grid-cols-3 gap-4 h-full">
+  <div class="col-span-2 card overflow-auto">
+    <div class="section">
+      <div class="section-title">
+        <div class="title">{{ 'apartment.subTitle.apartmentInfo' | translate }}</div>
+        <div>
+          <p-button
+            severity="primary"
+            variant="outlined"
+            label="{{ 'button.update' | translate }}"
+            iconPos="right"
+            icon="pi pi-pen-to-square"
+            (onClick)="openFormEdit()"
+            *ngIf="canAccess(Constants.Action_Update)"
+          ></p-button>
+        </div>
+      </div>
+      <div class="section-content">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'apartment.label.code' | translate }}:</div>
+            <div class="text-value">{{ data?.apartmentCode }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'apartment.label.name' | translate }}:</div>
+            <div class="text-value">{{ data?.apartmentNumber }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'apartment.label.status' | translate }}:</div>
+            <div class="text-value">{{ data?.statusLabel }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'apartment.label.building' | translate }}:</div>
+            <div class="text-value">{{ data?.buildingBlock }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'apartment.label.floor' | translate }}:</div>
+            <div class="text-value">{{ data?.floor }}</div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-label">{{ 'apartment.label.area' | translate }}:</div>
+            <div class="text-value">{{ data?.area }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section mt-4">
+      <div class="section-title">
+        <div class="title">{{ 'apartment.subTitle.listVehicle' | translate }}</div>
+      </div>
+      <!-- Danh sách phương tiện -->
+      <div class="section-content">
+        <p-table [value]="listVehicle" [scrollable]="true" dataKey="code">
+          <ng-template #header>
+            <tr>
+              <th>{{ 'vehicle.label.vehicleName' | translate }}</th>
+              <th>{{ 'vehicle.label.licensePlate' | translate }}</th>
+              <th>{{ 'vehicle.label.vehicleType' | translate }}</th>
+              <th>{{ 'vehicle.label.registrationDate' | translate }}</th>
+              <th>{{ 'vehicle.label.color' | translate }}</th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-item>
+            @if (!loading) {
+              <tr>
+                <td>
+                  <a class="text-link" [routerLink]="['/vehicle', item?.requestUuid]">{{
+                    item.name
+                  }}</a>
+                </td>
+                <td>{{ item.licensePlate }}</td>
+                <td>{{ item.vehicleTypeLabel }}</td>
+                <td>{{ item?.registrationDate | date: 'dd/MM/yyyy' }}</td>
+                <td>{{ item?.color }}</td>
+              </tr>
+            } @else {
+              <tr>
+                <td>
+                  <p-skeleton/>
+                </td>
+                <td>
+                  <p-skeleton/>
+                </td>
+                <td>
+                  <p-skeleton/>
+                </td>
+                <td>
+                  <p-skeleton/>
+                </td>
+                <td>
+                  <p-skeleton/>
+                </td>
+                <td>
+                  <p-skeleton/>
+                </td>
+              </tr>
+            }
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+    <div class="section mt-4">
+      <div class="section-title">
+        <div class="title">{{ 'apartment.subTitle.listResident' | translate }}</div>
+      </div>
+      <!-- Danh sách cư dân -->
+      <div class="section-content">
+        <p-table
+          [value]="listResident"
+          [scrollable]="true"
+          dataKey="code"
+          [(contextMenuSelection)]="itemResidentSelect"
+          [contextMenu]="cm"
+        >
+          <ng-template #header>
+            <tr>
+              <th>{{ 'resident.label.fullName' | translate }}</th>
+              <th class="!text-center">{{ 'resident.label.gender' | translate }}</th>
+              <th>{{ 'resident.label.birthDate' | translate }}</th>
+              <th class="!text-center">{{ 'resident.label.headOfHousehold' | translate }}</th>
+              <th>{{ 'resident.label.relationship' | translate }}</th>
+              <th>{{ 'resident.label.phoneNumber' | translate }}</th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-item>
+            @if (!loading) {
+              <tr [pContextMenuRow]="item">
+                <td>
+                  <a class="text-link" [routerLink]="['/resident', item.id]">
+                    {{ item.fullName }}</a
+                  >
+                </td>
+                <td class="!text-center">
+                  @switch (item.genderCode) {
+                    @case ('M') {
+                      <i class="icon-male-primary-xl"></i>
+                    }
+                    @default {
+                      <i class="icon-female-danger-xl"></i>
+                    }
+                  }
+                </td>
+                <td>{{ item.birthDate | date: 'dd/MM/yyyy' }}</td>
+                <td class="!text-center">
+                  @if (item.isOwner) {
+                    <i class="icon-home-owner-thirdary-xl"></i>
+                  }
+                </td>
+                <td>{{ item?.relationshipLabel }}</td>
+                <td>
+                  <a
+                    class="text-link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    [href]="'https://zalo.me/' +item?.phoneNumber"
+                    >{{ item?.phoneNumber }}
+                  </a>
+                </td>
+              </tr>
+            } @else {
+              <tr>
+                <td>
+                  <p-skeleton/>
+                </td>
+                <td>
+                  <p-skeleton/>
+                </td>
+                <td>
+                  <p-skeleton/>
+                </td>
+                <td>
+                  <p-skeleton/>
+                </td>
+                <td>
+                  <p-skeleton/>
+                </td>
+                <td>
+                  <p-skeleton/>
+                </td>
+              </tr>
+            }
+          </ng-template>
+        </p-table>
+        <p-contextMenu #cm [model]="itemsMenu" appendTo="body">
+          <ng-template #item let-item>
+            <a pRipple class="flex items-center p-contextmenu-item-link">
+              <span [class]="item.icon"></span>
+              <span class="ml-2">{{ item.label | translate }}</span>
+            </a>
+          </ng-template>
+        </p-contextMenu>
+      </div>
+    </div>
+
+    <div class="section mt-4">
+      <div class="section-title">
+        <div class="title">{{ 'apartment.subTitle.invoices' | translate }}</div>
+      </div>
+      <!-- Danh sách hóa đơn theo năm -->
+      <div class="section-content">
+        <p-accordion [multiple]="true">
+          <p-accordionTab *ngFor="let year of listInvoiceYear" [header]="('invoices.label.year' | translate) + ' ' + year">
+            <apartment-invoice-year
+              [selectedYear]="year"
+              [apartmentCode]="data?.apartmentCode"
+              [optionsPaymentStatus]="optionsPaymentStatus"
+            ></apartment-invoice-year>
+          </p-accordionTab>
+        </p-accordion>
+      </div>
+    </div>
+
+    <div class="section">
+    <div class="section-title mt-4">
+      <div class="title">{{ 'apartment.subTitle.complaintList' | translate }}</div>
+    </div>
+    <!-- Danh sách phản ánh -->
+    <div class="flex-1 overflow-hidden">
+      <p-table scrollHeight="flex" [value]="dataTableComplaint.content" [scrollable]="true" dataKey="code"
+             >
+      <ng-template #header>
+        <tr>
+          <th style="min-width: 5rem">STT</th>
+          <th>{{ 'complaint.label.subject' | translate }}</th>
+          <th>{{ 'complaint.label.complaintAt' | translate }}</th>
+          <th style="min-width: 10rem">{{ 'complaint.label.status' | translate }}</th>
+          <th>{{ 'complaint.label.assignedName' | translate }}</th>
+          <th>{{ 'complaint.label.completedAt' | translate }}</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-item let-i="rowIndex">
+        @if (!dataTableComplaint.loading) {
+          <tr (dblclick)="viewDetailComplaint(item.id)">
+            <td>
+              {{ i + 1 + dataTableComplaint.first }}
+            </td>
+            <td>{{ item?.subject }}</td>
+            <td>{{ item?.complaintAt | date: 'dd/MM/yyyy - HH:mm' }}</td>
+            <td>
+              <div class="flex items-center gap-2">
+                @switch (item.status) {
+                  @case (Constants.StatusComplaint.New) {
+                    <i class="icon-send-record-success-xl"></i>
+                  }
+                  @case (Constants.StatusComplaint.Note) {
+                    <i class="pi icon-recorded-status-thirdary-xl"></i>
+                  }
+                  @case (Constants.StatusComplaint.Pending) {
+                    <i class="icon-time-pending-secondary-xl"></i>
+                  }
+                  @case (Constants.StatusComplaint.Processing) {
+                    <i class="icon-time-processing-primary-xl"></i>
+                  }
+                  @case (Constants.StatusComplaint.Pause) {
+                    <i class="icon-time-pause-warning-xl"></i>
+                  }
+                  @case (Constants.StatusComplaint.Complete) {
+                    <i class="pi pi-check-circle text-success "></i>
+                  }
+                  @case (Constants.StatusComplaint.Reject) {
+                    <i class="pi pi-ban text-thirdary "></i>
+                  }
+                  @case (Constants.StatusComplaint.Cancel) {
+                    <i class="pi pi-times-circle text-danger "></i>
+                  }
+                }
+                {{ item.status | getLabel: {options: listComplaintStatus.data} }}
+              </div>
+            </td>
+            <td class="text-primary">{{ item?.assignedName }}</td>
+            <td>{{ item?.resolutionTimeStr }}</td>
+          </tr>
+        } @else {
+          <tr>
+            <td>
+              <p-skeleton/>
+            </td>
+            <td>
+              <p-skeleton/>
+            </td>
+            <td>
+              <p-skeleton/>
+            </td>
+            <td>
+              <p-skeleton/>
+            </td>
+            <td>
+              <p-skeleton/>
+            </td>
+            <td>
+              <p-skeleton/>
+            </td>
+          </tr>
+        }
+      </ng-template>
+    </p-table>
+  </div>
+  <p-paginator
+    styleClass="!justify-end"
+    (onPageChange)="onPageChange($event)"
+    [first]="dataTableComplaint.first"
+    [rows]="dataTableComplaint.size"
+    [totalRecords]="dataTableComplaint.totalElements"
+    [rowsPerPageOptions]="[10, 20, 30]"/>
+</div>
+  </div>
+  <div class="card">
+    <ecm-folder [uuidEcmFolder]="data?.uuidEcmFolder!"></ecm-folder>
+  </div>
+</div>
+
+<p-drawer
+  [(visible)]="visibleEdit"
+  header="{{ 'apartment.subTitle.update' | translate }}"
+  styleClass="w-34-5-rem"
+  position="right"
+>
+  <apartment-form #formEdit type="update" (changeData)="onChangeData($event)"></apartment-form>
+  <ng-template #footer>
+    <p-button
+      severity="info"
+      variant="outlined"
+      label="{{ 'button.cancel' | translate }}"
+      icon="text-xl pi pi-times"
+      iconPos="right"
+      (onClick)="visibleEdit = false"
+    ></p-button>
+    <p-button
+      variant="outlined"
+      label="{{ 'button.save' | translate }}"
+      icon="text-xl pi pi-check"
+      iconPos="right"
+      (onClick)="formEdit.onSave()"
+    ></p-button>
+  </ng-template>
+</p-drawer>

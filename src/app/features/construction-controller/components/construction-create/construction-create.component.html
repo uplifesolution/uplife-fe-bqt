@@ -1,0 +1,61 @@
+<div class="mb-6 font-semibold text-primary">
+  {{ 'apartment.subTitle.apartmentInfo' | translate }}
+</div>
+<div [formGroup]="form">
+  <div class="flex flex-col gap-6">
+    <m-text
+      class="block"
+      label="{{ 'apartment.label.code' | translate }}"
+      formControlName="apartmentCode"
+      (keyup.enter)="searchApartment()"
+      (onClickIcon)="searchApartment()"
+      (onBlur)="searchApartment()"
+      rightIcon="pi pi-search"
+    ></m-text>
+    <m-text
+      class="block"
+      label="{{ 'apartment.label.name' | translate }}"
+      formControlName="apartmentNumber"
+    ></m-text>
+    <m-text
+      class="block"
+      label="{{ 'apartment.label.floorApartment' | translate }}"
+      formControlName="apartmentFloor"
+    ></m-text>
+    <m-text
+      class="block"
+      label="{{ 'apartment.label.ownerName' | translate }}"
+      formControlName="apartmentOwner"
+    ></m-text>
+  </div>
+
+  <div class="my-6 font-semibold text-primary">
+    {{ 'construction.subTitle.constructionInfo' | translate }}
+  </div>
+
+  <div class="flex flex-col gap-6">
+    <m-datepicker
+      class="block"
+      label="{{ 'construction.label.startDate' | translate }}"
+      formControlName="startDate"
+    ></m-datepicker>
+    <m-datepicker
+      class="block"
+      label="{{ 'construction.label.endDate' | translate }}"
+      formControlName="endDate"
+    ></m-datepicker>
+    <m-select
+      class="mb-6 block"
+      label="{{ 'construction.label.noiseLevel' | translate }}"
+      formControlName="noiseLevel"
+      [options]="listPriorityLevel.data"
+      [loading]="listPriorityLevel.loading"
+    ></m-select>
+  </div>
+  <div>
+    <div class="block font-semibold mb-2">
+      <span>{{ 'construction.label.workDescription' | translate }}</span>
+    </div>
+    <textarea class="w-full" rows="10" pTextarea formControlName="workDescription"></textarea>
+  </div>
+</div>

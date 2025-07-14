@@ -1,0 +1,51 @@
+<div class="flex-auto">
+  <label *ngIf="showLabel" class="block font-semibold mb-2">
+    <span class="mr-1">{{ label }}</span>
+    <span *ngIf="checkRequire()" class="text-danger">*</span>
+  </label>
+  @if (isMultiSelect) {
+    <p-multiSelect
+      class="w-full"
+      appendTo="body"
+      [formControl]="control"
+      [options]="options"
+      [optionLabel]="optionLabel"
+      [optionValue]="optionValue"
+      [optionDisabled]="optionDisabled"
+      [loading]="loading"
+      [showClear]="true"
+      display="chip"
+    >
+      <ng-template #item let-option>
+        <span>{{ option[optionLabel] | translate }}</span>
+      </ng-template>
+      <ng-template #selectedItem let-selectedOption>
+        <span>{{ selectedOption[optionLabel] | translate }}</span>
+      </ng-template>
+    </p-multiSelect>
+  } @else {
+    <p-select
+      class="w-full"
+      appendTo="body"
+      [formControl]="control"
+      [options]="options"
+      [optionLabel]="optionLabel"
+      [optionValue]="optionValue"
+      [optionDisabled]="optionDisabled"
+      [loading]="loading"
+      [showClear]="true"
+    >
+      <ng-template #item let-option>
+        <span>{{ option[optionLabel] | translate }}</span>
+      </ng-template>
+      <ng-template #selectedItem let-selectedOption>
+        <span>{{ selectedOption[optionLabel] | translate }}</span>
+      </ng-template>
+    </p-select>
+  }
+  <div class="validator-errors">
+    <small *ngIf="errors" class="error-msg block fadeinup animation-duration-300">
+      <span class="block text-danger">{{ getError().key | translate: getError().required }}</span>
+    </small>
+  </div>
+</div>

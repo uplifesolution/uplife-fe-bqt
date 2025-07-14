@@ -1,0 +1,47 @@
+:host {
+  ::ng-deep {
+    .p-tree-node-leaf:not(.file-node-content) > .p-tree-node-content .p-tree-node-toggle-button {
+      visibility: visible !important;
+    }
+
+    .p-tree-node-label {
+      flex: 1;
+    }
+
+    @mixin base-ecm-icon() {
+      min-width: 16px;
+      width: 16px;
+      height: 20px;
+      background-repeat: no-repeat;
+      background-size: contain;
+      display: inline-block;
+    }
+
+    .ecm-folder, .ecm-folder-open {
+      height: 16px !important;
+    }
+
+    $icons: (
+      ecm-folder: '/assets/icons/ecm-folder.svg',
+      ecm-folder-open: '/assets/icons/ecm-folder-open.svg',
+      ecm-file-doc: '/assets/icons/ecm-file-doc.svg',
+      ecm-file-exe: '/assets/icons/ecm-file-exe.svg',
+      ecm-file-html: '/assets/icons/ecm-file-html.svg',
+      ecm-file-img: '/assets/icons/ecm-file-img.svg',
+      ecm-file-mp3: '/assets/icons/ecm-file-mp3.svg',
+      ecm-file-mp4: '/assets/icons/ecm-file-mp4.svg',
+      ecm-file-pdf: '/assets/icons/ecm-file-pdf.svg',
+      ecm-file-ppt: '/assets/icons/ecm-file-ppt.svg',
+      ecm-file-rar: '/assets/icons/ecm-file-rar.svg',
+      ecm-file-excel: '/assets/icons/ecm-file-excel.svg',
+    );
+
+    // Nếu không có size → mặc định
+    @each $iconName, $iconPath in $icons {
+      .#{$iconName} {
+        @include base-ecm-icon();
+        background-image: url(#{$iconPath});
+      }
+    }
+  }
+}
